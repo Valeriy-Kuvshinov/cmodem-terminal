@@ -1,0 +1,8 @@
+# VS code
+.vscode
+
+# Compiled app
+modem_terminal
+
+# Compiled C Object files
+*.o
