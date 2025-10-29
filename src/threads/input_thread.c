@@ -60,8 +60,6 @@ static int process_stdin_line(ModemTerminal *term, char *line, int sms_mode) {
 
     return EXIT_SIGNAL;
   }
-
-  // Handle SMS mode
   if (IS_SMS_COMMAND(line)) {
     send_sms_command(term, line);
 

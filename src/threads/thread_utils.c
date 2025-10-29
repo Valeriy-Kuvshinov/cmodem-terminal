@@ -55,15 +55,15 @@ void start_threads(ModemTerminal *term, pthread_t *modem_thread,
 void wait_for_threads(ModemTerminal *term, pthread_t modem_thread,
                       pthread_t stdin_thread) {
   if (exit_requested) {
-    // Immediate exit: cancel threads instead of waiting for sleep cycles
+    /* Immediate exit: cancel threads instead of waiting for sleep cycles */
     pthread_cancel(modem_thread);
     pthread_cancel(stdin_thread);
 
-    // Wait briefly for cancellation to complete
+    /* Wait briefly for cancellation to complete */
     pthread_join(stdin_thread, NULL);
     pthread_join(modem_thread, NULL);
   } else {
-    // Normal exit: wait for threads to finish their current operations
+    /* Normal exit: wait for threads to finish their current operations */
     pthread_join(stdin_thread, NULL);
 
     set_running(term, FALSE);

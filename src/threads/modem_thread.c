@@ -15,6 +15,7 @@ static void handle_remaining_buffer(ModemTerminal *term, char *line_start) {
 
   if (term->buffer_length > 0 && line_start != term->output_buffer)
     memmove(term->output_buffer, line_start, term->buffer_length + 1);
+
   else if (term->buffer_length == 0)
     term->output_buffer[0] = NULL_TERMINATOR;
 }

@@ -82,12 +82,10 @@ int open_serial_port(const char *device, int max_retries, int retry_delay) {
 
     fd = open(device, O_RDWR | O_NOCTTY | O_SYNC);
 
-    if (fd >= 0) {
-      if (configure_serial_port(fd) == 0) {
-        log_open_success(device);
+    if (fd >= 0 && configure_serial_port(fd) == 0) {
+      log_open_success(device);
 
-        return fd;
-      }
+      return fd;
     }
     if (attempt < max_retries - 1) {
       log_open_retry(device, retry_delay);

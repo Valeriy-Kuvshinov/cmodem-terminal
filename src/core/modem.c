@@ -85,6 +85,26 @@ static void log_init_failure_retry(const char *desc, int attempt,
   print_output(MSG_TYPE_WARNING, status);
 }
 
+static int process_response(const char *response, int n, int attempt,
+                            const char *desc) {
+  if (strstr(response, MODEM_AT_RESPONSE_OK))
+    return TRUE;
+  else if (strstr(response, MSG_TYPE_ERROR) || n == 0) {
+    if (attempt < MAX_INIT_RETRIES - 1) {
+      log_init_failure_retry(desc, attempt, response);
+
+      sleep(INIT_RETRY_DELAY_SEC);
+    } else
+      log_init_failure_final(desc, response);
+
+    return FALSE;
+  } else {
+    log_init_success(desc, response);
+
+    return TRUE;
+  }
+}
+
 static int attempt_init(ModemTerminal *term, const char *cmd,
                         const char *desc) {
   int attempt;
@@ -98,25 +118,10 @@ static int attempt_init(ModemTerminal *term, const char *cmd,
 
     n = send_command(term, cmd, response, sizeof(response));
 
-    if (n > 0) {
-      if (strstr(response, MODEM_AT_RESPONSE_OK)) {
-        success = TRUE;
+    if (n > 0 && process_response(response, n, attempt, desc)) {
+      success = TRUE;
 
-        break;
-      } else if (strstr(response, MSG_TYPE_ERROR) || n == 0) {
-        if (attempt < MAX_INIT_RETRIES - 1) {
-          log_init_failure_retry(desc, attempt, response);
-
-          sleep(INIT_RETRY_DELAY_SEC);
-        } else
-          log_init_failure_final(desc, response);
-      } else {
-        log_init_success(desc, response);
-
-        success = TRUE;
-
-        break;
-      }
+      break;
     }
   }
   return success;
