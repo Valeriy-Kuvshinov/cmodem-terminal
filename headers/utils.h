@@ -2,6 +2,7 @@
 #define UTILS_H
 
 #include <stdio.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 /* 'Boolean' Constants */
@@ -24,29 +25,11 @@
 #define MAX_STATUS_MSG 512
 #define MAX_RESPONSE 256
 
-#define MAX_STATUS_MSG 512
-#define MAX_RESPONSE 256
-
 /* Timing constants (milliseconds) */
-#define MODEM_RESPONSE_DELAY_MS 500
-#define COMMAND_DELAY_MS 100
-#define SMS_SEND_DELAY_MS 500
-#define THREAD_SLEEP_MS 10
 #define MILLISECONDS_PER_SECOND 1000
 
 /* Timing constants (microseconds) */
 #define MICROSECONDS_PER_MILLISECOND 1000
-#define NANOSECONDS_PER_MILLISECOND 1000000
-
-/* Retry configuration */
-#define MAX_PORT_RETRIES 3
-#define PORT_RETRY_DELAY_SEC 8
-#define MAX_INIT_RETRIES 3
-#define INIT_RETRY_DELAY_SEC 3
-
-/* Termios settings */
-#define SERIAL_VMIN 0
-#define SERIAL_VTIME 10
 
 /* Response message types */
 #define MSG_TYPE_STATUS "STATUS"

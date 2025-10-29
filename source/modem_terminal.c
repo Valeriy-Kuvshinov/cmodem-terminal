@@ -1,7 +1,6 @@
 #include <string.h>
 
 #include "../headers/modem.h"
-#include "../headers/serial.h"
 #include "../headers/threads.h"
 #include "../headers/utils.h"
 
@@ -14,18 +13,6 @@ static int is_args_valid(int argc, char *argv[]) {
     return 0;
   }
   return 1;
-}
-
-static void init_modem_terminal(ModemTerminal *term, const char *device_port) {
-  memset(term, 0, sizeof(ModemTerminal));
-  term->running = 1;
-
-  pthread_mutex_init(&term->serial_mutex, NULL);
-  pthread_mutex_init(&term->running_mutex, NULL);
-
-  // Open serial port
-  term->fd =
-      open_serial_port(device_port, MAX_PORT_RETRIES, PORT_RETRY_DELAY_SEC);
 }
 
 static int is_connection_stable(int fd) {
@@ -43,49 +30,26 @@ static int is_connection_stable(int fd) {
     response[n] = NULL_TERMINATOR;
 
     if (strstr(response, MODEM_AT_RESPONSE_OK))
-      return 1; // Success
+      return 1;
   }
   print_output(MSG_TYPE_ERROR, "No response to initial AT command");
 
-  return 0; // Failure
+  return 0;
 }
 
-static void start_threads(ModemTerminal *term, pthread_t *modem_thread,
-                          pthread_t *stdin_thread) {
-  pthread_create(modem_thread, NULL, read_modem_thread, term);
-  pthread_create(stdin_thread, NULL, read_stdin_thread, term);
-}
-
-static void wait_for_threads(ModemTerminal *term, pthread_t modem_thread,
-                             pthread_t stdin_thread) {
-  // Wait for exit
-  pthread_join(stdin_thread, NULL);
-  set_running(term, 0);
-  pthread_join(modem_thread, NULL);
-}
-
-static void cleanup_resources(ModemTerminal *term) {
-  close(term->fd);
-
-  pthread_mutex_destroy(&term->serial_mutex);
-  pthread_mutex_destroy(&term->running_mutex);
-
-  print_output(MSG_TYPE_STATUS, "Modem terminal stopped");
-}
-
+/* App main method */
+/* ==================================================================== */
 int main(int argc, char *argv[]) {
-  ModemTerminal term;
-  pthread_t modem_thread, stdin_thread;
   const char *device_port;
+  pthread_t modem_thread, stdin_thread;
+  ModemTerminal term;
 
   if (!is_args_valid(argc, argv))
     return 1;
 
   device_port = argv[1];
 
-  init_modem_terminal(&term, device_port);
-
-  if (term.fd < 0)
+  if (!init_terminal(&term, device_port))
     return 1;
 
   if (!is_connection_stable(term.fd)) {

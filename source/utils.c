@@ -10,19 +10,20 @@ void print_output(const char *type, const char *text) {
 }
 
 void msleep(int ms) {
-  struct timeval tv;
+  struct timeval timeval;
 
-  tv.tv_sec = ms / MILLISECONDS_PER_SECOND;
-  tv.tv_usec = (ms % MILLISECONDS_PER_SECOND) * MICROSECONDS_PER_MILLISECOND;
+  timeval.tv_sec = ms / MILLISECONDS_PER_SECOND;
+  timeval.tv_usec =
+      (ms % MILLISECONDS_PER_SECOND) * MICROSECONDS_PER_MILLISECOND;
 
-  select(0, NULL, NULL, NULL, &tv);
+  select(0, NULL, NULL, NULL, &timeval);
 }
 
 ssize_t safe_write(int fd, const void *buf, size_t count) {
   ssize_t ret = write(fd, buf, count);
 
-  if (ret < 0) {
-    print_output("ERROR", "Write to serial port failed");
-  }
+  if (ret < 0)
+    print_output(MSG_TYPE_ERROR, "Write to serial port failed");
+
   return ret;
 }

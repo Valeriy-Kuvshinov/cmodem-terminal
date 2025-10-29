@@ -8,6 +8,10 @@
 
 #define BAUDRATE B230400
 
+/* Termios settings */
+#define SERIAL_VMIN 0
+#define SERIAL_VTIME 10
+
 // Function prototype for opening serial port
 int open_serial_port(const char *device, int max_retries, int retry_delay);
 

@@ -93,6 +93,7 @@ int open_serial_port(const char *device, int max_retries, int retry_delay) {
     }
     if (attempt < max_retries - 1) {
       log_open_retry(device, retry_delay);
+
       sleep(retry_delay);
     }
   }
