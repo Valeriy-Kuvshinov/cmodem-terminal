@@ -1,5 +1,6 @@
 #include <string.h>
 
+#include "../../include/globals/globals.h"
 #include "../../include/threads/threads.h"
 #include "../../include/utils/utils.h"
 
@@ -38,7 +39,7 @@ static void send_sms_content(ModemTerminal *term, const char *line) {
   pthread_mutex_unlock(&term->serial_mutex);
 }
 
-static void send_regular_command(ModemTerminal *term, const char *line) {
+static void send_command(ModemTerminal *term, const char *line) {
   pthread_mutex_lock(&term->serial_mutex);
 
   strncpy(term->last_command, line, sizeof(term->last_command));
@@ -53,28 +54,30 @@ static void send_regular_command(ModemTerminal *term, const char *line) {
 
 static int process_stdin_line(ModemTerminal *term, char *line, int sms_mode) {
   if (IS_EXIT_COMMAND(line)) {
-    set_running(term, 0);
+    exit_requested = TRUE;
 
-    return -1; // Exit signal
+    set_running(term, FALSE);
+
+    return EXIT_SIGNAL;
   }
 
   // Handle SMS mode
   if (IS_SMS_COMMAND(line)) {
     send_sms_command(term, line);
 
-    return SMS_MODE_ON; // Enter SMS mode
+    return SMS_MODE_ON;
   } else if (sms_mode && IS_SMS_END_MARKER(line)) {
     send_sms_end_marker(term);
 
-    return SMS_MODE_OFF; // Exit SMS mode
+    return SMS_MODE_OFF;
   } else if (sms_mode) {
     send_sms_content(term, line);
 
-    return SMS_MODE_ON; // Stay in SMS mode
+    return SMS_MODE_ON;
   } else {
-    send_regular_command(term, line);
+    send_command(term, line);
 
-    return SMS_MODE_OFF; // Regular mode
+    return SMS_MODE_OFF;
   }
 }
 
@@ -103,7 +106,7 @@ static void clear_stdin_buffer(void) {
 /* ==================================================================== */
 void *read_stdin_thread(void *arg) {
   char line[MAX_COMMAND];
-  int sms_mode = 0;
+  int sms_mode = FALSE;
   ModemTerminal *term = (ModemTerminal *)arg;
 
   while (is_running(term)) {
@@ -115,11 +118,10 @@ void *read_stdin_thread(void *arg) {
 
         continue;
       }
-
       if (strlen(line) > 0) {
         int new_mode = process_stdin_line(term, line, sms_mode);
 
-        if (new_mode == -1)
+        if (new_mode == EXIT_SIGNAL)
           break;
 
         sms_mode = new_mode;

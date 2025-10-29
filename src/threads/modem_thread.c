@@ -6,13 +6,11 @@
 /* Inner STATIC methods */
 /* ==================================================================== */
 static void handle_remaining_buffer(ModemTerminal *term, char *line_start) {
-  // Check for urgent messages in remaining buffer
   if (check_urgent_message(line_start)) {
     print_output(MSG_TYPE_URGENT, line_start);
 
     line_start += strlen(line_start);
   }
-  // Move remaining data to start of buffer
   term->buffer_length = strlen(line_start);
 
   if (term->buffer_length > 0 && line_start != term->output_buffer)

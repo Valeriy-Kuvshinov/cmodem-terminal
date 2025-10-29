@@ -88,7 +88,7 @@ static void log_init_failure_retry(const char *desc, int attempt,
 static int attempt_init(ModemTerminal *term, const char *cmd,
                         const char *desc) {
   int attempt;
-  int success = 0;
+  int success = FALSE;
 
   for (attempt = 0; attempt < MAX_INIT_RETRIES; attempt++) {
     char response[MAX_BUFFER] = {0};
@@ -100,7 +100,7 @@ static int attempt_init(ModemTerminal *term, const char *cmd,
 
     if (n > 0) {
       if (strstr(response, MODEM_AT_RESPONSE_OK)) {
-        success = 1;
+        success = TRUE;
 
         break;
       } else if (strstr(response, MSG_TYPE_ERROR) || n == 0) {
@@ -113,7 +113,7 @@ static int attempt_init(ModemTerminal *term, const char *cmd,
       } else {
         log_init_success(desc, response);
 
-        success = 1;
+        success = TRUE;
 
         break;
       }

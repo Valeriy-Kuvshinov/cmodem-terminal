@@ -35,8 +35,6 @@
 /* App launch flags */
 #define QUIET_MODE_FLAG "--quiet"
 
-#define EXIT_APP_COMMAND "exit"
-
 /* Response message types */
 #define MSG_TYPE_STATUS "STATUS"
 #define MSG_TYPE_ERROR "ERROR"

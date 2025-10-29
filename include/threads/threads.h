@@ -8,6 +8,7 @@
 
 #define SMS_MODE_ON 1
 #define SMS_MODE_OFF 0
+#define EXIT_SIGNAL -1
 
 /* Retry configuration */
 #define MAX_PORT_RETRIES 3
@@ -16,7 +17,9 @@
 /* Timing constants (milliseconds) */
 #define COMMAND_DELAY_MS 100
 #define SMS_SEND_DELAY_MS 500
-#define THREAD_SLEEP_MS 10
+#define THREAD_SLEEP_MS 5
+
+#define EXIT_APP_COMMAND "exit"
 
 /* Macro for handling quit terminal */
 #define IS_EXIT_COMMAND(line) (strcasecmp(line, EXIT_APP_COMMAND) == 0)
@@ -34,7 +37,7 @@
 /* Macros for character reading */
 #define READ_UNTIL_NEWLINE_OR_EOF(c) ((c = getchar()) != NEWLINE && c != EOF)
 
-// Thread lifecycle
+/* Thread lifecycle */
 int init_terminal(ModemTerminal *term, const char *device_port);
 void start_threads(ModemTerminal *term, pthread_t *modem_thread,
                    pthread_t *stdin_thread);
@@ -42,11 +45,11 @@ void wait_for_threads(ModemTerminal *term, pthread_t modem_thread,
                       pthread_t stdin_thread);
 void cleanup_resources(ModemTerminal *term);
 
-// Thread state
+/* Thread state */
 int is_running(ModemTerminal *term);
 void set_running(ModemTerminal *term, int value);
 
-// Thread functions
+/* Thread functions */
 void *read_modem_thread(void *arg);
 void *read_stdin_thread(void *arg);
 

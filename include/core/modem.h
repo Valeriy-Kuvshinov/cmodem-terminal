@@ -66,7 +66,7 @@ typedef struct {
 #define MAX_INIT_RETRIES 3
 #define INIT_RETRY_DELAY_SEC 3
 
-// Function prototypes
+/* Function prototypes */
 int check_urgent_message(const char *buffer);
 void categorize_and_output_line(const ModemTerminal *term, const char *line);
 int init_modem(ModemTerminal *term);

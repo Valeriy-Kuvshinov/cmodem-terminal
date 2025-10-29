@@ -1,5 +1,6 @@
 #include <string.h>
 
+#include "../../include/globals/globals.h"
 #include "../../include/io/serial.h"
 #include "../../include/threads/threads.h"
 
@@ -28,7 +29,7 @@ void set_running(ModemTerminal *term, int value) {
 int init_terminal(ModemTerminal *term, const char *device_port) {
   memset(term, 0, sizeof(ModemTerminal));
 
-  term->running = 1;
+  term->running = TRUE;
 
   pthread_mutex_init(&term->serial_mutex, NULL);
   pthread_mutex_init(&term->running_mutex, NULL);
@@ -40,9 +41,9 @@ int init_terminal(ModemTerminal *term, const char *device_port) {
     pthread_mutex_destroy(&term->serial_mutex);
     pthread_mutex_destroy(&term->running_mutex);
 
-    return 0;
+    return FALSE;
   }
-  return 1;
+  return TRUE;
 }
 
 void start_threads(ModemTerminal *term, pthread_t *modem_thread,
@@ -53,11 +54,22 @@ void start_threads(ModemTerminal *term, pthread_t *modem_thread,
 
 void wait_for_threads(ModemTerminal *term, pthread_t modem_thread,
                       pthread_t stdin_thread) {
-  pthread_join(stdin_thread, NULL);
+  if (exit_requested) {
+    // Immediate exit: cancel threads instead of waiting for sleep cycles
+    pthread_cancel(modem_thread);
+    pthread_cancel(stdin_thread);
 
-  set_running(term, 0);
+    // Wait briefly for cancellation to complete
+    pthread_join(stdin_thread, NULL);
+    pthread_join(modem_thread, NULL);
+  } else {
+    // Normal exit: wait for threads to finish their current operations
+    pthread_join(stdin_thread, NULL);
 
-  pthread_join(modem_thread, NULL);
+    set_running(term, FALSE);
+
+    pthread_join(modem_thread, NULL);
+  }
 }
 
 void cleanup_resources(ModemTerminal *term) {
