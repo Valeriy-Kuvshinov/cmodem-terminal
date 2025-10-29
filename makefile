@@ -35,7 +35,7 @@ $(OBJ_DIR):
 
 $(EXEC): $(OBJECTS)
 	@echo "Linking $(EXEC)..."
-	@$(CC) $(FLAGS) -I$(INC_DIR) -o $@ $(OBJECTS)
+	@$(CC) $(FLAGS) -I$(INC_DIR) -o $@ $(OBJECTS) -lpthread
 
 $(OBJ_DIR)/core/%.o: $(SRC_DIR)/core/%.c
 	@echo "Compiling $<..."
