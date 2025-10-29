@@ -1,8 +1,7 @@
-#include <sys/select.h>
 #include <time.h>
 #include <unistd.h>
 
-#include "../headers/utils.h"
+#include "../../include/utils/utils.h"
 
 void print_output(const char *type, const char *text) {
   printf("[%s] %s%c", type, text, NEWLINE);

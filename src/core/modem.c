@@ -6,8 +6,8 @@
 #include <termios.h>
 #include <unistd.h>
 
-#include "../headers/modem.h"
-#include "../headers/utils.h"
+#include "../../include/core/modem.h"
+#include "../../include/utils/utils.h"
 
 static const char *init_commands[][2] = {
     {AT_RESET, AT_RESET_DESC},

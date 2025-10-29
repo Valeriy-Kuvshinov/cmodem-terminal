@@ -1,12 +1,10 @@
 #include <errno.h>
 #include <fcntl.h>
-#include <stdio.h>
 #include <string.h>
 #include <termios.h>
-#include <unistd.h>
 
-#include "../headers/serial.h"
-#include "../headers/utils.h"
+#include "../../include/io/serial.h"
+#include "../../include/utils/utils.h"
 
 /* Inner STATIC methods */
 /* ==================================================================== */

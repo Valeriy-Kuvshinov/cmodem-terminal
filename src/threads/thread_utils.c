@@ -1,7 +1,7 @@
 #include <string.h>
 
-#include "../headers/serial.h"
-#include "../headers/threads.h"
+#include "../../include/io/serial.h"
+#include "../../include/threads/threads.h"
 
 /* Outer methods */
 /* ==================================================================== */

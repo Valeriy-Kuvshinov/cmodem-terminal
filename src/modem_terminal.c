@@ -1,8 +1,8 @@
 #include <string.h>
 
-#include "../headers/modem.h"
-#include "../headers/threads.h"
-#include "../headers/utils.h"
+#include "../include/core/modem.h"
+#include "../include/threads/threads.h"
+#include "../include/utils/utils.h"
 
 /* Inner STATIC methods */
 /* ==================================================================== */

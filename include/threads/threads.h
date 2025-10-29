@@ -3,8 +3,8 @@
 
 #include <strings.h>
 
-#include "modem.h"
-#include "utils.h"
+#include "../core/modem.h"
+#include "../utils/utils.h"
 
 #define SMS_MODE_ON 1
 #define SMS_MODE_OFF 0

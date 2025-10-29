@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../headers/modem_parser.h"
-#include "../headers/utils.h"
+#include "../../include/core/response_parser.h"
+#include "../../include/utils/utils.h"
 
 static const char *urgent_msg_arr[] = {URGENT_MSG_CMTI,
                                        URGENT_MSG_CMT,

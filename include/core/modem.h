@@ -1,8 +1,9 @@
 #ifndef MODEM_H
 #define MODEM_H
 
-#include "utils.h"
 #include <pthread.h>
+
+#include "../utils/utils.h"
 
 typedef struct {
   int fd;

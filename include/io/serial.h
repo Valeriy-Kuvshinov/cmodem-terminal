@@ -1,7 +1,7 @@
 #ifndef SERIAL_H
 #define SERIAL_H
 
-#include "utils.h"
+#include "../utils/utils.h"
 
 // Serial port constants
 #define CRTSCTS 0x80000000
