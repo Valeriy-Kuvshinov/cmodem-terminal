@@ -27,8 +27,6 @@
 /* Macros for SMS handling */
 #define IS_SMS_COMMAND(line)                                                   \
   (strncmp(line, AT_SEND_SMS "=", AT_SEND_SMS_LENGTH + 1) == 0)
-#define IS_SMS_END_MARKER(line)                                                \
-  (line[0] == SMS_END_MARKER && line[1] == NULL_TERMINATOR)
 
 /* Macros for input validation */
 #define HAS_NEWLINE(str) (strchr((str), NEWLINE) != NULL)

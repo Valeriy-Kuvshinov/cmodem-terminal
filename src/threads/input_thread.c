@@ -19,7 +19,7 @@ static void send_sms_command(ModemTerminal *term, const char *line) {
   msleep(SMS_SEND_DELAY_MS);
 }
 
-static void send_sms_end_marker(ModemTerminal *term) {
+static void complete_sms_sending(ModemTerminal *term) {
   pthread_mutex_lock(&term->serial_mutex);
 
   char sms_end_marker = CTRL_Z;
@@ -64,14 +64,11 @@ static int process_stdin_line(ModemTerminal *term, char *line, int sms_mode) {
     send_sms_command(term, line);
 
     return SMS_MODE_ON;
-  } else if (sms_mode && IS_SMS_END_MARKER(line)) {
-    send_sms_end_marker(term);
-
-    return SMS_MODE_OFF;
   } else if (sms_mode) {
     send_sms_content(term, line);
+    complete_sms_sending(term);
 
-    return SMS_MODE_ON;
+    return SMS_MODE_OFF;
   } else {
     send_command(term, line);
 

@@ -17,7 +17,6 @@
 #define CRLF_LENGTH 2
 #define AT_CRLF "AT\r\n"
 #define AT_CRLF_LENGTH 4
-#define SMS_END_MARKER '.'
 
 /* Buffer sizes */
 #define MAX_BUFFER 4096
