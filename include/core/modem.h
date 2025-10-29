@@ -9,7 +9,7 @@ typedef struct {
   int fd;
   int running;
   char output_buffer[MAX_BUFFER];
-  size_t buffer_len;
+  size_t buffer_length;
   char last_command[MAX_COMMAND];
   pthread_mutex_t serial_mutex;
   pthread_mutex_t running_mutex;

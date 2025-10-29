@@ -18,7 +18,7 @@
 #define SMS_SEND_DELAY_MS 500
 #define THREAD_SLEEP_MS 10
 
-/* Macros */
+/* Macro for handling quit terminal */
 #define IS_EXIT_COMMAND(line) (strcasecmp(line, EXIT_APP_COMMAND) == 0)
 
 /* Macros for SMS handling */
@@ -26,6 +26,13 @@
   (strncmp(line, AT_SEND_SMS "=", AT_SEND_SMS_LENGTH + 1) == 0)
 #define IS_SMS_END_MARKER(line)                                                \
   (line[0] == SMS_END_MARKER && line[1] == NULL_TERMINATOR)
+
+/* Macros for input validation */
+#define HAS_NEWLINE(str) (strchr((str), NEWLINE) != NULL)
+#define IS_BUFFER_FULL(str, size) (strlen(str) == (size) - 1)
+
+/* Macros for character reading */
+#define READ_UNTIL_NEWLINE_OR_EOF(c) ((c = getchar()) != NEWLINE && c != EOF)
 
 // Thread lifecycle
 int init_terminal(ModemTerminal *term, const char *device_port);

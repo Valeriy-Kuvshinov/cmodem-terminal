@@ -23,6 +23,7 @@
 #define MAX_BUFFER 4096
 #define MAX_COMMAND 512
 #define MAX_STATUS_MSG 512
+#define MAX_INPUT_LENGTH 512
 #define MAX_RESPONSE 256
 
 /* Timing constants (milliseconds) */

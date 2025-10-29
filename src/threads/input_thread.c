@@ -7,12 +7,14 @@
 /* ==================================================================== */
 static void send_sms_command(ModemTerminal *term, const char *line) {
   pthread_mutex_lock(&term->serial_mutex);
+
   strncpy(term->last_command, AT_SEND_SMS, sizeof(term->last_command));
 
   safe_write(term->fd, line, strlen(line));
   safe_write(term->fd, CRLF, CRLF_LENGTH);
 
   pthread_mutex_unlock(&term->serial_mutex);
+
   msleep(SMS_SEND_DELAY_MS);
 }
 
@@ -24,6 +26,7 @@ static void send_sms_end_marker(ModemTerminal *term) {
   safe_write(term->fd, &sms_end_marker, 1);
 
   pthread_mutex_unlock(&term->serial_mutex);
+
   msleep(COMMAND_DELAY_MS);
 }
 
@@ -37,12 +40,14 @@ static void send_sms_content(ModemTerminal *term, const char *line) {
 
 static void send_regular_command(ModemTerminal *term, const char *line) {
   pthread_mutex_lock(&term->serial_mutex);
+
   strncpy(term->last_command, line, sizeof(term->last_command));
 
   safe_write(term->fd, line, strlen(line));
   safe_write(term->fd, CRLF, CRLF_LENGTH);
 
   pthread_mutex_unlock(&term->serial_mutex);
+
   msleep(COMMAND_DELAY_MS);
 }
 
@@ -73,6 +78,27 @@ static int process_stdin_line(ModemTerminal *term, char *line, int sms_mode) {
   }
 }
 
+static int sanitize_input(char *line, size_t buffer_size) {
+  line[buffer_size - 1] = NULL_TERMINATOR;
+
+  if (!HAS_NEWLINE(line) && IS_BUFFER_FULL(line, buffer_size))
+    return 0;
+
+  size_t length = strlen(line);
+
+  if (length > 0 && line[length - 1] == NEWLINE)
+    line[length - 1] = NULL_TERMINATOR;
+
+  return 1;
+}
+
+static void clear_stdin_buffer(void) {
+  int c;
+
+  while (READ_UNTIL_NEWLINE_OR_EOF(c))
+    ;
+}
+
 /* Outer methods */
 /* ==================================================================== */
 void *read_stdin_thread(void *arg) {
@@ -82,12 +108,15 @@ void *read_stdin_thread(void *arg) {
 
   while (is_running(term)) {
     if (fgets(line, sizeof(line), stdin) != NULL) {
-      size_t len = strlen(line);
+      if (!sanitize_input(line, sizeof(line))) {
+        clear_stdin_buffer();
 
-      if (len > 0 && line[len - 1] == NEWLINE)
-        line[len - 1] = NULL_TERMINATOR;
+        print_output(MSG_TYPE_WARNING, "Input too long - ignored");
 
-      if (len > 0) {
+        continue;
+      }
+
+      if (strlen(line) > 0) {
         int new_mode = process_stdin_line(term, line, sms_mode);
 
         if (new_mode == -1)

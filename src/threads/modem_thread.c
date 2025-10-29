@@ -13,20 +13,20 @@ static void handle_remaining_buffer(ModemTerminal *term, char *line_start) {
     line_start += strlen(line_start);
   }
   // Move remaining data to start of buffer
-  term->buffer_len = strlen(line_start);
+  term->buffer_length = strlen(line_start);
 
-  if (term->buffer_len > 0 && line_start != term->output_buffer)
-    memmove(term->output_buffer, line_start, term->buffer_len + 1);
-  else if (term->buffer_len == 0)
+  if (term->buffer_length > 0 && line_start != term->output_buffer)
+    memmove(term->output_buffer, line_start, term->buffer_length + 1);
+  else if (term->buffer_length == 0)
     term->output_buffer[0] = NULL_TERMINATOR;
 }
 
-static void add_to_buffer(ModemTerminal *term, const char *data, int len) {
-  if (term->buffer_len + len < MAX_BUFFER - 1) {
-    memcpy(term->output_buffer + term->buffer_len, data, len);
+static void add_to_buffer(ModemTerminal *term, const char *data, int length) {
+  if (term->buffer_length + length < MAX_BUFFER - 1) {
+    memcpy(term->output_buffer + term->buffer_length, data, length);
 
-    term->buffer_len += len;
-    term->output_buffer[term->buffer_len] = NULL_TERMINATOR;
+    term->buffer_length += length;
+    term->output_buffer[term->buffer_length] = NULL_TERMINATOR;
   }
 }
 

@@ -25,8 +25,8 @@ static const char *init_commands[][2] = {
 /* ==================================================================== */
 static void log_init_failure_final(const char *desc, const char *response) {
   char status[MAX_STATUS_MSG];
-  size_t response_len = strlen(response);
-  const char *response_msg = response_len > 0 ? response : "No response";
+  size_t length = strlen(response);
+  const char *response_msg = length > 0 ? response : "No response";
 
   snprintf(status, sizeof(status), "%s failed after %d attempts (Response: %s)",
            desc, MAX_INIT_RETRIES, response_msg);
@@ -76,8 +76,8 @@ static void log_init_success(const char *desc, const char *response) {
 static void log_init_failure_retry(const char *desc, int attempt,
                                    const char *response) {
   char status[MAX_STATUS_MSG];
-  size_t response_len = strlen(response);
-  const char *response_msg = response_len > 0 ? response : "No response";
+  size_t length = strlen(response);
+  const char *response_msg = length > 0 ? response : "No response";
 
   snprintf(status, sizeof(status),
            "%s failed, retrying in %d seconds... (Response: %s)", desc,
