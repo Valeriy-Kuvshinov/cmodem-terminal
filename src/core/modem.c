@@ -1,10 +1,4 @@
-#include <fcntl.h>
-#include <pthread.h>
-#include <stdio.h>
 #include <string.h>
-#include <sys/select.h>
-#include <termios.h>
-#include <unistd.h>
 
 #include "../../include/core/modem.h"
 #include "../../include/utils/utils.h"
@@ -31,10 +25,11 @@ static const char *init_commands[][2] = {
 /* ==================================================================== */
 static void log_init_failure_final(const char *desc, const char *response) {
   char status[MAX_STATUS_MSG];
+  size_t response_len = strlen(response);
+  const char *response_msg = response_len > 0 ? response : "No response";
 
   snprintf(status, sizeof(status), "%s failed after %d attempts (Response: %s)",
-           desc, MAX_INIT_RETRIES,
-           strlen(response) > 0 ? response : "No response");
+           desc, MAX_INIT_RETRIES, response_msg);
   print_output(MSG_TYPE_WARNING, status);
 }
 
@@ -43,8 +38,10 @@ static int send_command(ModemTerminal *term, const char *cmd, char *response,
   int n;
 
   pthread_mutex_lock(&term->serial_mutex);
+
   safe_write(term->fd, cmd, strlen(cmd));
   safe_write(term->fd, CRLF, CRLF_LENGTH);
+
   pthread_mutex_unlock(&term->serial_mutex);
 
   msleep(MODEM_RESPONSE_DELAY_MS);
@@ -79,12 +76,12 @@ static void log_init_success(const char *desc, const char *response) {
 static void log_init_failure_retry(const char *desc, int attempt,
                                    const char *response) {
   char status[MAX_STATUS_MSG];
+  size_t response_len = strlen(response);
+  const char *response_msg = response_len > 0 ? response : "No response";
 
   snprintf(status, sizeof(status),
            "%s failed, retrying in %d seconds... (Response: %s)", desc,
-           INIT_RETRY_DELAY_SEC,
-           strlen(response) > 0 ? response : "No response");
-
+           INIT_RETRY_DELAY_SEC, response_msg);
   print_output(MSG_TYPE_WARNING, status);
 }
 

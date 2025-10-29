@@ -1,3 +1,6 @@
+#include <errno.h>
+#include <string.h>
+#include <sys/select.h>
 #include <time.h>
 #include <unistd.h>
 
@@ -22,7 +25,7 @@ ssize_t safe_write(int fd, const void *buf, size_t count) {
   ssize_t ret = write(fd, buf, count);
 
   if (ret < 0)
-    print_output(MSG_TYPE_ERROR, "Write to serial port failed");
+    print_output("ERROR", strerror(errno));
 
   return ret;
 }

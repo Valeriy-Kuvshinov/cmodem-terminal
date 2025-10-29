@@ -1,7 +1,7 @@
 #include <string.h>
 
-#include "../headers/threads.h"
-#include "../headers/utils.h"
+#include "../../include/threads/threads.h"
+#include "../../include/utils/utils.h"
 
 /* Inner STATIC methods */
 /* ==================================================================== */
@@ -87,7 +87,7 @@ void *read_stdin_thread(void *arg) {
       if (len > 0 && line[len - 1] == NEWLINE)
         line[len - 1] = NULL_TERMINATOR;
 
-      if (strlen(line) > 0) {
+      if (len > 0) {
         int new_mode = process_stdin_line(term, line, sms_mode);
 
         if (new_mode == -1)

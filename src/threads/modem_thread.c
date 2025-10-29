@@ -1,7 +1,7 @@
 #include <string.h>
 
-#include "../headers/threads.h"
-#include "../headers/utils.h"
+#include "../../include/threads/threads.h"
+#include "../../include/utils/utils.h"
 
 /* Inner STATIC methods */
 /* ==================================================================== */

@@ -3,6 +3,8 @@
 
 #include "../utils/utils.h"
 
+#define O_RDWR 02
+
 // Serial port constants
 #define CRTSCTS 0x80000000
 
