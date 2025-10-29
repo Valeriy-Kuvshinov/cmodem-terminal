@@ -32,6 +32,11 @@
 /* Timing constants (microseconds) */
 #define MICROSECONDS_PER_MILLISECOND 1000
 
+/* App launch flags */
+#define QUIET_MODE_FLAG "--quiet"
+
+#define EXIT_APP_COMMAND "exit"
+
 /* Response message types */
 #define MSG_TYPE_STATUS "STATUS"
 #define MSG_TYPE_ERROR "ERROR"
@@ -43,7 +48,8 @@
 #define MSG_TYPE_SMS "SMS"
 #define MSG_TYPE_CALL "CALL"
 
-#define EXIT_APP_COMMAND "exit"
+#define HAS_QUIET_MODE_FLAG(argc, argv)                                        \
+  (strcmp((argv)[2], QUIET_MODE_FLAG) == 0)
 
 /* Function prototypes */
 ssize_t safe_write(int fd, const void *buf, size_t count);
