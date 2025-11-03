@@ -35,7 +35,7 @@
 #define TCSANOW 0
 
 /* Baud rates */
-#define BAUDRATE 0010003
+#define BAUDRATE 230400
 
 /* Termios settings */
 #define SERIAL_VMIN 0
