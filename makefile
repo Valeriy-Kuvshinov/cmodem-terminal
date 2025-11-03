@@ -1,6 +1,6 @@
 # Compile flags and directory names
 CC = gcc
-FLAGS = -std=c11 -pedantic -Wall -g
+FLAGS = -std=c11 -pedantic -Wall -g -O2
 SRC_DIR = src
 INC_DIR = include
 

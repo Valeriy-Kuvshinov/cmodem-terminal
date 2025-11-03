@@ -1,11 +1,4 @@
-#include <string.h>
-
-#include "../../include/globals/chars.h"
-#include "../../include/globals/time.h"
-#include "../../include/modem/commands.h"
 #include "../../include/modem/modem.h"
-#include "../../include/modem/responses.h"
-#include "../../include/utils/utils.h"
 
 static const char *init_commands[][2] = {
     {AT_RESET, AT_RESET_DESC},
@@ -25,11 +18,17 @@ static const char *init_commands[][2] = {
 /* ==================================================================== */
 static void log_init_failure_final(const char *desc, const char *response) {
   char status[MAX_STATUS_MSG];
-  size_t length = strlen(response);
-  const char *response_msg = length > 0 ? response : "No response";
+  char msg[MAX_STATUS_MSG]; // Temporary buffer for safe truncation
+
+  if (strlen(response) > 0) {
+    strncpy(msg, response, sizeof(msg) - 1);
+
+    msg[sizeof(msg) - 1] = NEWLINE;
+  } else
+    strcpy(msg, "No response");
 
   snprintf(status, sizeof(status), "%s failed after %d attempts (Response: %s)",
-           desc, MAX_INIT_RETRIES, response_msg);
+           desc, MAX_INIT_RETRIES, msg);
   print_output(MSG_TYPE_WARNING, status);
 }
 
@@ -60,6 +59,7 @@ static void log_init_status(const char *desc, int attempt) {
   if (attempt > 0)
     snprintf(status, sizeof(status), "Initializing: %s (retry %d/%d)", desc,
              attempt + 1, MAX_INIT_RETRIES);
+
   else
     snprintf(status, sizeof(status), "Initializing: %s", desc);
 
@@ -76,11 +76,13 @@ static void log_init_success(const char *desc, const char *response) {
 static void log_init_failure_retry(const char *desc, int attempt,
                                    const char *response) {
   char status[MAX_STATUS_MSG];
-  const char *response_msg = strlen(response) > 0 ? response : "No response";
+  const char *msg;
+
+  msg = strlen(response) > 0 ? response : "No response";
 
   snprintf(status, sizeof(status),
            "%s failed, retrying in %d seconds... (Response: %s)", desc,
-           INIT_RETRY_DELAY_SEC, response_msg);
+           INIT_RETRY_DELAY_SEC, msg);
   print_output(MSG_TYPE_WARNING, status);
 }
 

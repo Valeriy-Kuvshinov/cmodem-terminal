@@ -5,6 +5,11 @@
 #include <stdbool.h>
 
 #include "../globals/buffers.h"
+#include "../globals/chars.h"
+#include "../globals/time.h"
+#include "../modem/commands.h"
+#include "../modem/responses.h"
+#include "../utils/utils.h"
 
 typedef struct {
   int fd;
@@ -21,7 +26,6 @@ typedef struct {
 
 /* Function prototypes */
 int check_urgent_message(const char *buffer);
-void categorize_and_output_line(const ModemTerminal *term, const char *line);
 int init_modem(ModemTerminal *term);
 
 #endif

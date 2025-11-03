@@ -1,12 +1,4 @@
-#include <string.h>
-
-#include "../../include/globals/chars.h"
-#include "../../include/globals/globals.h"
-#include "../../include/globals/time.h"
-#include "../../include/modem/commands.h"
-#include "../../include/modem/responses.h"
 #include "../../include/threads/threads.h"
-#include "../../include/utils/utils.h"
 
 /* Inner STATIC methods */
 /* ==================================================================== */
@@ -24,9 +16,9 @@ static void send_sms_command(ModemTerminal *term, const char *line) {
 }
 
 static void complete_sms_sending(ModemTerminal *term) {
-  pthread_mutex_lock(&term->serial_mutex);
-
   char sms_end_marker = CTRL_Z;
+
+  pthread_mutex_lock(&term->serial_mutex);
 
   safe_write(term->fd, &sms_end_marker, 1);
 
@@ -106,6 +98,7 @@ static void clear_stdin_buffer(void) {
 void *read_stdin_thread(void *arg) {
   char line[MAX_COMMAND];
   int sms_mode = false;
+  thread_name = "INPUT";
   ModemTerminal *term = (ModemTerminal *)arg;
 
   while (is_terminal_running(term)) {

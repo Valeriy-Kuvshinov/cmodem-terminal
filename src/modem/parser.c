@@ -1,8 +1,6 @@
 #include <string.h>
 
 #include "../../include/modem/parser.h"
-#include "../../include/modem/responses.h"
-#include "../../include/utils/utils.h"
 
 static const char *urgent_msg_arr[] = {URGENT_MSG_CMTI,
                                        URGENT_MSG_CMT,
@@ -40,6 +38,7 @@ static void handle_call_msg(const char *line) {
 
   if (IS_CALL_END_MESSAGE(line))
     handle_call_end_msg(line);
+
   else if (IS_CALL_BEGIN_MESSAGE(line))
     handle_call_begin_msg(line);
 }
@@ -56,7 +55,7 @@ int check_urgent_message(const char *buffer) {
   return 0;
 }
 
-void categorize_and_output_line(const ModemTerminal *term, const char *line) {
+void categorize_line(const ModemTerminal *term, const char *line) {
   if (strlen(line) == 0)
     return;
 
@@ -78,6 +77,7 @@ void categorize_and_output_line(const ModemTerminal *term, const char *line) {
 
   /* Generic errors */
   else if (strstr(line, MSG_TYPE_ERROR)) {
+    /* False positive errors */
     if (IS_ERROR_OK_COMMAND(term->last_command))
       print_output(MSG_TYPE_COMPLETE, MODEM_RESPONSE_OK);
 

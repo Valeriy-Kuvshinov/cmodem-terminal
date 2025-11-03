@@ -1,15 +1,12 @@
-#include <errno.h>
-#include <string.h>
-#include <sys/select.h>
-#include <time.h>
-#include <unistd.h>
-
-#include "../../include/globals/chars.h"
-#include "../../include/globals/time.h"
 #include "../../include/utils/utils.h"
 
+/* Thread-safe logging with thread identification */
 void print_output(const char *type, const char *text) {
-  printf("[%s] %s%c", type, text, NEWLINE);
+  if (thread_name)
+    printf("[%s] %s: %s%c", thread_name, type, text, NEWLINE);
+  else
+    printf("%s: %s\n", type, text);
+
   fflush(stdout);
 }
 

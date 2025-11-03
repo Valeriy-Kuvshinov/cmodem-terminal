@@ -1,6 +1,3 @@
-
-#include "../../include/globals/globals.h"
-#include "../../include/modem/responses.h"
 #include "../../include/threads/threads.h"
 
 /* Inner STATIC methods */

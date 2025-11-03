@@ -3,7 +3,10 @@
 
 #include <strings.h>
 
+#include "../globals/globals.h"
+#include "../io/serial.h"
 #include "../modem/modem.h"
+#include "../modem/parser.h"
 #include "../utils/utils.h"
 
 /* SMS mode handling */

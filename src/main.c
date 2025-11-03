@@ -1,9 +1,3 @@
-#include <string.h>
-
-#include "../include/globals/chars.h"
-#include "../include/globals/globals.h"
-#include "../include/modem/modem.h"
-#include "../include/modem/responses.h"
 #include "../include/threads/threads.h"
 #include "../include/utils/utils.h"
 

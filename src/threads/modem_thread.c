@@ -1,11 +1,4 @@
-#include <string.h>
-
-#include "../../include/globals/chars.h"
-#include "../../include/globals/time.h"
-#include "../../include/io/serial.h"
-#include "../../include/modem/responses.h"
 #include "../../include/threads/threads.h"
-#include "../../include/utils/utils.h"
 
 /* Inner STATIC methods */
 /* ==================================================================== */
@@ -41,7 +34,7 @@ static void process_complete_lines(ModemTerminal *term) {
     *crlf = NULL_TERMINATOR;
 
     if (strlen(line_start) > 0)
-      categorize_and_output_line(term, line_start);
+      categorize_line(term, line_start);
 
     line_start = crlf + CRLF_LENGTH;
   }
@@ -82,6 +75,7 @@ int init_terminal(ModemTerminal *term, const char *device_port) {
 
 void *read_modem_thread(void *arg) {
   char temp_buf[MAX_BUFFER];
+  thread_name = "MODEM";
   ModemTerminal *term = (ModemTerminal *)arg;
 
   while (is_terminal_running(term)) {
