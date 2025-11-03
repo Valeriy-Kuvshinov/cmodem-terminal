@@ -1,12 +1,7 @@
 #include "../../include/utils/utils.h"
 
-/* Thread-safe logging with thread identification */
 void print_output(const char *type, const char *text) {
-  if (thread_name)
-    printf("[%s] %s: %s%c", thread_name, type, text, NEWLINE);
-  else
-    printf("%s: %s\n", type, text);
-
+  printf("%s: %s%c", type, text, NEWLINE);
   fflush(stdout);
 }
 

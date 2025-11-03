@@ -75,7 +75,6 @@ int init_terminal(ModemTerminal *term, const char *device_port) {
 
 void *read_modem_thread(void *arg) {
   char temp_buf[MAX_BUFFER];
-  thread_name = "MODEM";
   ModemTerminal *term = (ModemTerminal *)arg;
 
   while (is_terminal_running(term)) {

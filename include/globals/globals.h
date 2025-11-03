@@ -5,9 +5,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-/* Global flag for thread identification while logging */
-extern _Thread_local const char *thread_name;
-
 /* Global exit flag for immediate thread termination */
 extern _Alignas(32) _Atomic bool exit_requested;
 

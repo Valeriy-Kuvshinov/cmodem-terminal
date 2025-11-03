@@ -98,7 +98,6 @@ static void clear_stdin_buffer(void) {
 void *read_stdin_thread(void *arg) {
   char line[MAX_COMMAND];
   int sms_mode = false;
-  thread_name = "INPUT";
   ModemTerminal *term = (ModemTerminal *)arg;
 
   while (is_terminal_running(term)) {
