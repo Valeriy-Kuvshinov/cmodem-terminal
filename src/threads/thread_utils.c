@@ -1,49 +1,50 @@
-#include <string.h>
 
 #include "../../include/globals/globals.h"
-#include "../../include/io/serial.h"
+#include "../../include/modem/responses.h"
 #include "../../include/threads/threads.h"
+
+/* Inner STATIC methods */
+/* ==================================================================== */
+/* Immediate exit: cancel threads instead of waiting for sleep cycles */
+void fast_exit_threads(pthread_t modem_thread, pthread_t stdin_thread) {
+  pthread_cancel(modem_thread);
+  pthread_cancel(stdin_thread);
+
+  /* Wait briefly for cancellation to complete */
+  pthread_join(stdin_thread, NULL);
+  pthread_join(modem_thread, NULL);
+}
+
+/* Normal exit: wait for threads to finish their current operations */
+void normal_exit_threads(ModemTerminal *term, pthread_t modem_thread,
+                         pthread_t stdin_thread) {
+  pthread_join(stdin_thread, NULL);
+
+  set_terminal_running(term, false);
+
+  pthread_join(modem_thread, NULL);
+}
 
 /* Outer methods */
 /* ==================================================================== */
-int is_running(ModemTerminal *term) {
+int is_terminal_running(ModemTerminal *term) {
   int running;
 
   pthread_mutex_lock(&term->running_mutex);
 
-  running = term->running;
+  running = term->is_running;
 
   pthread_mutex_unlock(&term->running_mutex);
 
   return running;
 }
 
-void set_running(ModemTerminal *term, int value) {
+void set_terminal_running(ModemTerminal *term, bool value) {
   pthread_mutex_lock(&term->running_mutex);
 
-  term->running = value;
+  term->is_running = value;
 
   pthread_mutex_unlock(&term->running_mutex);
-}
-
-int init_terminal(ModemTerminal *term, const char *device_port) {
-  memset(term, 0, sizeof(ModemTerminal));
-
-  term->running = TRUE;
-
-  pthread_mutex_init(&term->serial_mutex, NULL);
-  pthread_mutex_init(&term->running_mutex, NULL);
-
-  term->fd =
-      open_serial_port(device_port, MAX_PORT_RETRIES, PORT_RETRY_DELAY_SEC);
-
-  if (term->fd < 0) {
-    pthread_mutex_destroy(&term->serial_mutex);
-    pthread_mutex_destroy(&term->running_mutex);
-
-    return FALSE;
-  }
-  return TRUE;
 }
 
 void start_threads(ModemTerminal *term, pthread_t *modem_thread,
@@ -54,22 +55,10 @@ void start_threads(ModemTerminal *term, pthread_t *modem_thread,
 
 void wait_for_threads(ModemTerminal *term, pthread_t modem_thread,
                       pthread_t stdin_thread) {
-  if (exit_requested) {
-    /* Immediate exit: cancel threads instead of waiting for sleep cycles */
-    pthread_cancel(modem_thread);
-    pthread_cancel(stdin_thread);
-
-    /* Wait briefly for cancellation to complete */
-    pthread_join(stdin_thread, NULL);
-    pthread_join(modem_thread, NULL);
-  } else {
-    /* Normal exit: wait for threads to finish their current operations */
-    pthread_join(stdin_thread, NULL);
-
-    set_running(term, FALSE);
-
-    pthread_join(modem_thread, NULL);
-  }
+  if (atomic_load(&exit_requested))
+    fast_exit_threads(modem_thread, stdin_thread);
+  else
+    normal_exit_threads(term, modem_thread, stdin_thread);
 }
 
 void cleanup_resources(ModemTerminal *term) {

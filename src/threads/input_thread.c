@@ -1,6 +1,10 @@
 #include <string.h>
 
+#include "../../include/globals/chars.h"
 #include "../../include/globals/globals.h"
+#include "../../include/globals/time.h"
+#include "../../include/modem/commands.h"
+#include "../../include/modem/responses.h"
 #include "../../include/threads/threads.h"
 #include "../../include/utils/utils.h"
 
@@ -54,9 +58,9 @@ static void send_command(ModemTerminal *term, const char *line) {
 
 static int process_stdin_line(ModemTerminal *term, char *line, int sms_mode) {
   if (IS_EXIT_COMMAND(line)) {
-    exit_requested = TRUE;
+    atomic_store(&exit_requested, true);
 
-    set_running(term, FALSE);
+    set_terminal_running(term, false);
 
     return EXIT_SIGNAL;
   }
@@ -101,10 +105,10 @@ static void clear_stdin_buffer(void) {
 /* ==================================================================== */
 void *read_stdin_thread(void *arg) {
   char line[MAX_COMMAND];
-  int sms_mode = FALSE;
+  int sms_mode = false;
   ModemTerminal *term = (ModemTerminal *)arg;
 
-  while (is_running(term)) {
+  while (is_terminal_running(term)) {
     if (fgets(line, sizeof(line), stdin) != NULL) {
       if (!sanitize_input(line, sizeof(line))) {
         clear_stdin_buffer();
@@ -122,7 +126,7 @@ void *read_stdin_thread(void *arg) {
         sms_mode = new_mode;
       }
     }
-    if (!is_running(term))
+    if (!is_terminal_running(term))
       break;
   }
   return NULL;

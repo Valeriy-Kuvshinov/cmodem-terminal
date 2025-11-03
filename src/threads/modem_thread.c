@@ -1,5 +1,9 @@
 #include <string.h>
 
+#include "../../include/globals/chars.h"
+#include "../../include/globals/time.h"
+#include "../../include/io/serial.h"
+#include "../../include/modem/responses.h"
 #include "../../include/threads/threads.h"
 #include "../../include/utils/utils.h"
 
@@ -56,12 +60,34 @@ static void process_received_data(ModemTerminal *term, char *temp_buf, int n) {
 
 /* Outer methods */
 /* ==================================================================== */
+int init_terminal(ModemTerminal *term, const char *device_port) {
+  memset(term, 0, sizeof(ModemTerminal));
+
+  term->is_running = true;
+
+  pthread_mutex_init(&term->serial_mutex, NULL);
+  pthread_mutex_init(&term->running_mutex, NULL);
+
+  term->fd =
+      open_serial_port(device_port, MAX_PORT_RETRIES, PORT_RETRY_DELAY_SEC);
+
+  if (term->fd < 0) {
+    pthread_mutex_destroy(&term->serial_mutex);
+    pthread_mutex_destroy(&term->running_mutex);
+
+    return false;
+  }
+  return true;
+}
+
 void *read_modem_thread(void *arg) {
   char temp_buf[MAX_BUFFER];
   ModemTerminal *term = (ModemTerminal *)arg;
 
-  while (is_running(term)) {
-    int n = read(term->fd, temp_buf, sizeof(temp_buf) - 1);
+  while (is_terminal_running(term)) {
+    int n;
+
+    n = read(term->fd, temp_buf, sizeof(temp_buf) - 1);
 
     if (n > 0)
       process_received_data(term, temp_buf, n);

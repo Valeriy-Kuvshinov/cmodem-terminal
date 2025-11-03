@@ -1,21 +1,5 @@
-#ifndef MODEM_H
-#define MODEM_H
-
-#include <pthread.h>
-
-#include "../utils/utils.h"
-
-typedef struct {
-  int fd;
-  int running;
-  char output_buffer[MAX_BUFFER];
-  size_t buffer_length;
-  char last_command[MAX_COMMAND];
-  pthread_mutex_t serial_mutex;
-  pthread_mutex_t running_mutex;
-} ModemTerminal;
-
-#define MODEM_AT_RESPONSE_OK "OK"
+#ifndef COMMANDS_H
+#define COMMANDS_H
 
 /* Error-OK commands */
 #define ERROR_OK_AT_CHUP "AT+CHUP"
@@ -49,17 +33,5 @@ typedef struct {
 /* Modem SMS related */
 #define AT_SEND_SMS "AT+CMGS"
 #define AT_SEND_SMS_LENGTH 7
-
-/* Timing constants (milliseconds) */
-#define MODEM_RESPONSE_DELAY_MS 500
-
-/* Retry configuration */
-#define MAX_INIT_RETRIES 3
-#define INIT_RETRY_DELAY_SEC 3
-
-/* Function prototypes */
-int check_urgent_message(const char *buffer);
-void categorize_and_output_line(const ModemTerminal *term, const char *line);
-int init_modem(ModemTerminal *term);
 
 #endif

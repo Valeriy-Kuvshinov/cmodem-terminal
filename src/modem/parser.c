@@ -1,6 +1,7 @@
 #include <string.h>
 
-#include "../../include/core/response_parser.h"
+#include "../../include/modem/parser.h"
+#include "../../include/modem/responses.h"
 #include "../../include/utils/utils.h"
 
 static const char *urgent_msg_arr[] = {URGENT_MSG_CMTI,
@@ -73,12 +74,12 @@ void categorize_and_output_line(const ModemTerminal *term, const char *line) {
 
   /* Command is valid */
   else if (IS_OK_RESPONSE(line))
-    print_output(MSG_TYPE_COMPLETE, MODEM_AT_RESPONSE_OK);
+    print_output(MSG_TYPE_COMPLETE, MODEM_RESPONSE_OK);
 
   /* Generic errors */
   else if (strstr(line, MSG_TYPE_ERROR)) {
     if (IS_ERROR_OK_COMMAND(term->last_command))
-      print_output(MSG_TYPE_COMPLETE, MODEM_AT_RESPONSE_OK);
+      print_output(MSG_TYPE_COMPLETE, MODEM_RESPONSE_OK);
 
     else
       print_output(MSG_TYPE_ERROR, line);
@@ -87,7 +88,6 @@ void categorize_and_output_line(const ModemTerminal *term, const char *line) {
   else if (IS_SIM_ERROR_MESSAGE(line))
     print_output(MSG_TYPE_ERROR, "SIMCARD MISSING");
 
-  /* Default */
   else
     print_output(MSG_TYPE_RESPONSE, line);
 }

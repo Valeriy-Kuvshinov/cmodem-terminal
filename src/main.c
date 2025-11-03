@@ -1,6 +1,9 @@
 #include <string.h>
 
-#include "../include/core/modem.h"
+#include "../include/globals/chars.h"
+#include "../include/globals/globals.h"
+#include "../include/modem/modem.h"
+#include "../include/modem/responses.h"
 #include "../include/threads/threads.h"
 #include "../include/utils/utils.h"
 
@@ -37,7 +40,7 @@ static int is_connection_stable(int fd) {
   if (n > 0) {
     response[n] = NULL_TERMINATOR;
 
-    if (strstr(response, MODEM_AT_RESPONSE_OK))
+    if (strstr(response, MODEM_RESPONSE_OK))
       return 1;
   }
   print_output(MSG_TYPE_ERROR, "No response to initial AT command");

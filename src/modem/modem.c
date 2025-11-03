@@ -1,6 +1,10 @@
 #include <string.h>
 
-#include "../../include/core/modem.h"
+#include "../../include/globals/chars.h"
+#include "../../include/globals/time.h"
+#include "../../include/modem/commands.h"
+#include "../../include/modem/modem.h"
+#include "../../include/modem/responses.h"
 #include "../../include/utils/utils.h"
 
 static const char *init_commands[][2] = {
@@ -72,8 +76,7 @@ static void log_init_success(const char *desc, const char *response) {
 static void log_init_failure_retry(const char *desc, int attempt,
                                    const char *response) {
   char status[MAX_STATUS_MSG];
-  size_t length = strlen(response);
-  const char *response_msg = length > 0 ? response : "No response";
+  const char *response_msg = strlen(response) > 0 ? response : "No response";
 
   snprintf(status, sizeof(status),
            "%s failed, retrying in %d seconds... (Response: %s)", desc,
@@ -83,8 +86,9 @@ static void log_init_failure_retry(const char *desc, int attempt,
 
 static int process_response(const char *response, int n, int attempt,
                             const char *desc) {
-  if (strstr(response, MODEM_AT_RESPONSE_OK))
-    return TRUE;
+  if (strstr(response, MODEM_RESPONSE_OK))
+    return true;
+
   else if (strstr(response, MSG_TYPE_ERROR) || n == 0) {
     if (attempt < MAX_INIT_RETRIES - 1) {
       log_init_failure_retry(desc, attempt, response);
@@ -93,18 +97,18 @@ static int process_response(const char *response, int n, int attempt,
     } else
       log_init_failure_final(desc, response);
 
-    return FALSE;
+    return false;
   } else {
     log_init_success(desc, response);
 
-    return TRUE;
+    return true;
   }
 }
 
 static int attempt_init(ModemTerminal *term, const char *cmd,
                         const char *desc) {
   int attempt;
-  int success = FALSE;
+  int success = false;
 
   for (attempt = 0; attempt < MAX_INIT_RETRIES; attempt++) {
     char response[MAX_BUFFER] = {0};
@@ -115,7 +119,7 @@ static int attempt_init(ModemTerminal *term, const char *cmd,
     n = send_command(term, cmd, response, sizeof(response));
 
     if (n > 0 && process_response(response, n, attempt, desc)) {
-      success = TRUE;
+      success = true;
 
       break;
     }

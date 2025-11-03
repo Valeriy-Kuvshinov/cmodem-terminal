@@ -1,0 +1,17 @@
+#ifndef RESPONSES_H
+#define RESPONSES_H
+
+/* Response message types */
+#define MSG_TYPE_STATUS "STATUS"
+#define MSG_TYPE_ERROR "ERROR"
+#define MSG_TYPE_COMPLETE "COMPLETE"
+#define MSG_TYPE_INFO "INFO"
+#define MSG_TYPE_RESPONSE "RESPONSE"
+#define MSG_TYPE_WARNING "WARNING"
+#define MSG_TYPE_URGENT "URGENT"
+#define MSG_TYPE_SMS "SMS"
+#define MSG_TYPE_CALL "CALL"
+
+#define MODEM_RESPONSE_OK "OK"
+
+#endif

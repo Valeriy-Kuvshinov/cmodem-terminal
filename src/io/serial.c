@@ -3,7 +3,9 @@
 #include <string.h>
 #include <termios.h>
 
+#include "../../include/globals/buffers.h"
 #include "../../include/io/serial.h"
+#include "../../include/modem/responses.h"
 #include "../../include/utils/utils.h"
 
 /* Inner STATIC methods */

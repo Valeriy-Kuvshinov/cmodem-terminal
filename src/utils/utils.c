@@ -4,6 +4,8 @@
 #include <time.h>
 #include <unistd.h>
 
+#include "../../include/globals/chars.h"
+#include "../../include/globals/time.h"
 #include "../../include/utils/utils.h"
 
 void print_output(const char *type, const char *text) {

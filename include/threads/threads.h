@@ -3,21 +3,15 @@
 
 #include <strings.h>
 
-#include "../core/modem.h"
+#include "../modem/modem.h"
 #include "../utils/utils.h"
 
-#define SMS_MODE_ON 1
-#define SMS_MODE_OFF 0
+/* SMS mode handling */
+#define SMS_MODE_ON true
+#define SMS_MODE_OFF false
 #define EXIT_SIGNAL -1
 
-/* Retry configuration */
 #define MAX_PORT_RETRIES 3
-#define PORT_RETRY_DELAY_SEC 8
-
-/* Timing constants (milliseconds) */
-#define COMMAND_DELAY_MS 100
-#define SMS_SEND_DELAY_MS 500
-#define THREAD_SLEEP_MS 5
 
 #define EXIT_APP_COMMAND "exit"
 
@@ -44,8 +38,8 @@ void wait_for_threads(ModemTerminal *term, pthread_t modem_thread,
 void cleanup_resources(ModemTerminal *term);
 
 /* Thread state */
-int is_running(ModemTerminal *term);
-void set_running(ModemTerminal *term, int value);
+int is_terminal_running(ModemTerminal *term);
+void set_terminal_running(ModemTerminal *term, bool value);
 
 /* Thread functions */
 void *read_modem_thread(void *arg);

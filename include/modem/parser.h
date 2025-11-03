@@ -1,7 +1,9 @@
-#ifndef MODEM_PARSER_H
-#define MODEM_PARSER_H
+#ifndef PARSER_H
+#define PARSER_H
 
+#include "commands.h"
 #include "modem.h"
+#include "responses.h"
 
 /* Modem response patterns */
 #define URGENT_MSG_CMTI "+CMTI"
@@ -46,7 +48,7 @@
 
 #define IS_ERROR_OK_COMMAND(cmd) (strstr(cmd, ERROR_OK_AT_CHUP))
 
-#define IS_OK_RESPONSE(line) (strcmp(line, MODEM_AT_RESPONSE_OK) == 0)
+#define IS_OK_RESPONSE(line) (strcmp(line, MODEM_RESPONSE_OK) == 0)
 
 int check_urgent_message(const char *buffer);
 void categorize_and_output_line(const ModemTerminal *term, const char *line);
