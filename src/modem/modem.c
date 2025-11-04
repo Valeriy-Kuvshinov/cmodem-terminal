@@ -57,11 +57,11 @@ static void log_init_status(const char *desc, int attempt) {
   char status[MAX_STATUS_MSG];
 
   if (attempt > 0)
-    snprintf(status, sizeof(status), "Initializing: %s (retry %d/%d)", desc,
-             attempt + 1, MAX_INIT_RETRIES);
+    snprintf(status, sizeof(status), "%s (retry %d/%d)", desc, attempt + 1,
+             MAX_INIT_RETRIES);
 
   else
-    snprintf(status, sizeof(status), "Initializing: %s", desc);
+    snprintf(status, sizeof(status), "%s", desc);
 
   print_output(MSG_TYPE_STATUS, status);
 }
