@@ -11,6 +11,9 @@
 #include "../modem/responses.h"
 #include "../utils/utils.h"
 
+/* Retry configuration */
+#define MAX_INIT_RETRIES 3
+
 typedef struct {
   int fd;
   bool is_running;
@@ -21,10 +24,9 @@ typedef struct {
   pthread_mutex_t running_mutex;
 } ModemTerminal;
 
-/* Retry configuration */
-#define MAX_INIT_RETRIES 3
+extern ModemTerminal terminal;
 
 /* Function prototypes */
-int init_modem(ModemTerminal *term);
+int init_modem(void);
 
 #endif

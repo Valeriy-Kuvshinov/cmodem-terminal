@@ -1,3 +1,4 @@
+#include "../include/modem/call.h"
 #include "../include/threads/threads.h"
 #include "../include/utils/utils.h"
 
@@ -48,27 +49,22 @@ int main(int argc, char *argv[]) {
   const char *device_port;
   int quiet_mode;
   pthread_t modem_thread, stdin_thread;
-  ModemTerminal term;
 
   if (!is_args_valid(argc, argv, &quiet_mode))
     return 1;
 
   device_port = argv[1];
 
-  if (!init_terminal(&term, device_port))
+  if (!init_terminal(device_port))
     return 1;
 
-  if (!is_connection_stable(term.fd)) {
-    close(term.fd);
-
-    return 1;
-  }
-
-  if (!init_modem(&term)) {
-    close(term.fd);
+  if (!is_connection_stable(terminal.fd) || !init_modem()) {
+    close(terminal.fd);
 
     return 1;
   }
+
+  init_call_state();
 
   print_output(MSG_TYPE_STATUS, "INIT COMPLETE");
 
@@ -77,11 +73,11 @@ int main(int argc, char *argv[]) {
     printf("Type '%s' to quit terminal.%c", EXIT_APP_COMMAND, NEWLINE);
   }
 
-  start_threads(&term, &modem_thread, &stdin_thread);
+  start_threads(&modem_thread, &stdin_thread);
 
-  wait_for_threads(&term, modem_thread, stdin_thread);
+  wait_for_threads(modem_thread, stdin_thread);
 
-  cleanup_resources(&term);
+  cleanup_resources();
 
   return 0;
 }

@@ -2,71 +2,71 @@
 
 /* Inner STATIC methods */
 /* ==================================================================== */
-static void handle_remaining_buffer(ModemTerminal *term, char *line_start) {
+static void handle_remaining_buffer(char *line_start) {
   if (IS_URGENT_MESSAGE(line_start)) {
     print_output(MSG_TYPE_URGENT, line_start);
 
     line_start += strlen(line_start);
   }
-  term->buffer_length = strlen(line_start);
+  terminal.buffer_length = strlen(line_start);
 
-  if (term->buffer_length > 0 && line_start != term->output_buffer)
-    memmove(term->output_buffer, line_start, term->buffer_length + 1);
+  if (terminal.buffer_length > 0 && line_start != terminal.output_buffer)
+    memmove(terminal.output_buffer, line_start, terminal.buffer_length + 1);
 
-  else if (term->buffer_length == 0)
-    term->output_buffer[0] = NULL_TERMINATOR;
+  else if (terminal.buffer_length == 0)
+    terminal.output_buffer[0] = NULL_TERMINATOR;
 }
 
-static void add_to_buffer(ModemTerminal *term, const char *data, int length) {
-  if (term->buffer_length + length < MAX_BUFFER - 1) {
-    memcpy(term->output_buffer + term->buffer_length, data, length);
+static void add_to_buffer(const char *data, int length) {
+  if (terminal.buffer_length + length < MAX_BUFFER - 1) {
+    memcpy(terminal.output_buffer + terminal.buffer_length, data, length);
 
-    term->buffer_length += length;
-    term->output_buffer[term->buffer_length] = NULL_TERMINATOR;
+    terminal.buffer_length += length;
+    terminal.output_buffer[terminal.buffer_length] = NULL_TERMINATOR;
   }
 }
 
-static void process_complete_lines(ModemTerminal *term) {
+static void process_complete_lines(void) {
   char *crlf;
-  char *line_start = term->output_buffer;
+  char *line_start = terminal.output_buffer;
 
   while ((crlf = strstr(line_start, CRLF)) != NULL) {
     *crlf = NULL_TERMINATOR;
 
     if (strlen(line_start) > 0)
-      categorize_line(term, line_start);
+      categorize_line(line_start);
 
     line_start = crlf + CRLF_LENGTH;
   }
-  handle_remaining_buffer(term, line_start);
+  handle_remaining_buffer(line_start);
 }
 
-static void process_received_data(ModemTerminal *term, char *temp_buf, int n) {
+static void process_received_data(char *temp_buf, int n) {
   temp_buf[n] = NULL_TERMINATOR;
 
-  pthread_mutex_lock(&term->serial_mutex);
-  add_to_buffer(term, temp_buf, n);
+  pthread_mutex_lock(&terminal.serial_mutex);
+  add_to_buffer(temp_buf, n);
 
-  process_complete_lines(term);
-  pthread_mutex_unlock(&term->serial_mutex);
+  process_complete_lines();
+  pthread_mutex_unlock(&terminal.serial_mutex);
 }
 
 /* Outer methods */
 /* ==================================================================== */
-int init_terminal(ModemTerminal *term, const char *device_port) {
-  memset(term, 0, sizeof(ModemTerminal));
+int init_terminal(const char *device_port) {
+  memset(&terminal, 0, sizeof(ModemTerminal));
 
-  term->is_running = true;
+  terminal.is_running = true;
 
-  pthread_mutex_init(&term->serial_mutex, NULL);
-  pthread_mutex_init(&term->running_mutex, NULL);
+  pthread_mutex_init(&terminal.serial_mutex, NULL);
+  pthread_mutex_init(&terminal.running_mutex, NULL);
 
-  term->fd =
+  terminal.fd =
       open_serial_port(device_port, MAX_PORT_RETRIES, PORT_RETRY_DELAY_SEC);
 
-  if (term->fd < 0) {
-    pthread_mutex_destroy(&term->serial_mutex);
-    pthread_mutex_destroy(&term->running_mutex);
+  if (terminal.fd < 0) {
+    pthread_mutex_destroy(&terminal.serial_mutex);
+    pthread_mutex_destroy(&terminal.running_mutex);
 
     return false;
   }
@@ -75,15 +75,14 @@ int init_terminal(ModemTerminal *term, const char *device_port) {
 
 void *read_modem_thread(void *arg) {
   char temp_buf[MAX_BUFFER];
-  ModemTerminal *term = (ModemTerminal *)arg;
 
-  while (is_terminal_running(term)) {
+  while (is_terminal_running()) {
     int n;
 
-    n = read(term->fd, temp_buf, sizeof(temp_buf) - 1);
+    n = read(terminal.fd, temp_buf, sizeof(temp_buf) - 1);
 
     if (n > 0)
-      process_received_data(term, temp_buf, n);
+      process_received_data(temp_buf, n);
 
     msleep(THREAD_SLEEP_MS);
   }

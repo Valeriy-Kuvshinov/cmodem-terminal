@@ -13,56 +13,53 @@ void fast_exit_threads(pthread_t modem_thread, pthread_t stdin_thread) {
 }
 
 /* Normal exit: wait for threads to finish their current operations */
-void normal_exit_threads(ModemTerminal *term, pthread_t modem_thread,
-                         pthread_t stdin_thread) {
+void normal_exit_threads(pthread_t modem_thread, pthread_t stdin_thread) {
   pthread_join(stdin_thread, NULL);
 
-  set_terminal_running(term, false);
+  set_terminal_running(false);
 
   pthread_join(modem_thread, NULL);
 }
 
 /* Outer methods */
 /* ==================================================================== */
-int is_terminal_running(ModemTerminal *term) {
+int is_terminal_running(void) {
   int running;
 
-  pthread_mutex_lock(&term->running_mutex);
+  pthread_mutex_lock(&terminal.running_mutex);
 
-  running = term->is_running;
+  running = terminal.is_running;
 
-  pthread_mutex_unlock(&term->running_mutex);
+  pthread_mutex_unlock(&terminal.running_mutex);
 
   return running;
 }
 
-void set_terminal_running(ModemTerminal *term, bool value) {
-  pthread_mutex_lock(&term->running_mutex);
+void set_terminal_running(bool value) {
+  pthread_mutex_lock(&terminal.running_mutex);
 
-  term->is_running = value;
+  terminal.is_running = value;
 
-  pthread_mutex_unlock(&term->running_mutex);
+  pthread_mutex_unlock(&terminal.running_mutex);
 }
 
-void start_threads(ModemTerminal *term, pthread_t *modem_thread,
-                   pthread_t *stdin_thread) {
-  pthread_create(modem_thread, NULL, read_modem_thread, term);
-  pthread_create(stdin_thread, NULL, read_stdin_thread, term);
+void start_threads(pthread_t *modem_thread, pthread_t *stdin_thread) {
+  pthread_create(modem_thread, NULL, read_modem_thread, NULL);
+  pthread_create(stdin_thread, NULL, read_stdin_thread, NULL);
 }
 
-void wait_for_threads(ModemTerminal *term, pthread_t modem_thread,
-                      pthread_t stdin_thread) {
+void wait_for_threads(pthread_t modem_thread, pthread_t stdin_thread) {
   if (atomic_load(&exit_requested))
     fast_exit_threads(modem_thread, stdin_thread);
   else
-    normal_exit_threads(term, modem_thread, stdin_thread);
+    normal_exit_threads(modem_thread, stdin_thread);
 }
 
-void cleanup_resources(ModemTerminal *term) {
-  close(term->fd);
+void cleanup_resources(void) {
+  close(terminal.fd);
 
-  pthread_mutex_destroy(&term->serial_mutex);
-  pthread_mutex_destroy(&term->running_mutex);
+  pthread_mutex_destroy(&terminal.serial_mutex);
+  pthread_mutex_destroy(&terminal.running_mutex);
 
   print_output(MSG_TYPE_STATUS, "Modem terminal stopped");
 }

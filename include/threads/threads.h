@@ -32,17 +32,16 @@
 /* Macros for character reading */
 #define READ_UNTIL_NEWLINE_OR_EOF(c) ((c = getchar()) != NEWLINE && c != EOF)
 
+/* Function prototypes */
 /* Thread lifecycle */
-int init_terminal(ModemTerminal *term, const char *device_port);
-void start_threads(ModemTerminal *term, pthread_t *modem_thread,
-                   pthread_t *stdin_thread);
-void wait_for_threads(ModemTerminal *term, pthread_t modem_thread,
-                      pthread_t stdin_thread);
-void cleanup_resources(ModemTerminal *term);
+int init_terminal(const char *device_port);
+void start_threads(pthread_t *modem_thread, pthread_t *stdin_thread);
+void wait_for_threads(pthread_t modem_thread, pthread_t stdin_thread);
+void cleanup_resources();
 
 /* Thread state */
-int is_terminal_running(ModemTerminal *term);
-void set_terminal_running(ModemTerminal *term, bool value);
+int is_terminal_running(void);
+void set_terminal_running(bool value);
 
 /* Thread functions */
 void *read_modem_thread(void *arg);

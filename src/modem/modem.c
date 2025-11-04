@@ -32,20 +32,19 @@ static void log_init_failure_final(const char *desc, const char *response) {
   print_output(MSG_TYPE_WARNING, status);
 }
 
-static int send_command(ModemTerminal *term, const char *cmd, char *response,
-                        size_t response_size) {
+static int send_command(const char *cmd, char *response, size_t response_size) {
   int n;
 
-  pthread_mutex_lock(&term->serial_mutex);
+  pthread_mutex_lock(&terminal.serial_mutex);
 
-  safe_write(term->fd, cmd, strlen(cmd));
-  safe_write(term->fd, CRLF, CRLF_LENGTH);
+  safe_write(terminal.fd, cmd, strlen(cmd));
+  safe_write(terminal.fd, CRLF, CRLF_LENGTH);
 
-  pthread_mutex_unlock(&term->serial_mutex);
+  pthread_mutex_unlock(&terminal.serial_mutex);
 
   msleep(MODEM_RESPONSE_DELAY_MS);
 
-  n = read(term->fd, response, response_size - 1);
+  n = read(terminal.fd, response, response_size - 1);
 
   if (n > 0)
     response[n] = NULL_TERMINATOR;
@@ -107,8 +106,7 @@ static int process_response(const char *response, int n, int attempt,
   }
 }
 
-static int attempt_init(ModemTerminal *term, const char *cmd,
-                        const char *desc) {
+static int attempt_init(const char *cmd, const char *desc) {
   int attempt;
   int success = false;
 
@@ -118,7 +116,7 @@ static int attempt_init(ModemTerminal *term, const char *cmd,
 
     log_init_status(desc, attempt);
 
-    n = send_command(term, cmd, response, sizeof(response));
+    n = send_command(cmd, response, sizeof(response));
 
     if (n > 0 && process_response(response, n, attempt, desc)) {
       success = true;
@@ -131,14 +129,14 @@ static int attempt_init(ModemTerminal *term, const char *cmd,
 
 /* Outer methods */
 /* ==================================================================== */
-int init_modem(ModemTerminal *term) {
+int init_modem(void) {
   int i;
 
   for (i = 0; init_commands[i][0] != NULL; i++) {
     const char *cmd = init_commands[i][0];
     const char *desc = init_commands[i][1];
 
-    if (attempt_init(term, cmd, desc))
+    if (attempt_init(cmd, desc))
       msleep(MODEM_RESPONSE_DELAY_MS);
   }
   return 1;
