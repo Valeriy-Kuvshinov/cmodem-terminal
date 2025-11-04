@@ -36,8 +36,8 @@
 /* Thread lifecycle */
 int init_terminal(const char *device_port);
 void start_threads(pthread_t *modem_thread, pthread_t *stdin_thread);
-void wait_for_threads(pthread_t modem_thread, pthread_t stdin_thread);
-void cleanup_resources();
+void exit_threads(pthread_t modem_thread, pthread_t stdin_thread);
+void cleanup();
 
 /* Thread state */
 int is_terminal_running(void);

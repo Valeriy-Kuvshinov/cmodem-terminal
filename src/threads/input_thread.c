@@ -71,8 +71,6 @@ static void send_command(const char *line) {
 
 static int process_stdin_line(char *line, int sms_mode) {
   if (IS_EXIT_COMMAND(line)) {
-    atomic_store(&exit_requested, true);
-
     set_terminal_running(false);
 
     return EXIT_SIGNAL;

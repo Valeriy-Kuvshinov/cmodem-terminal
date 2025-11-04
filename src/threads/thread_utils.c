@@ -1,26 +1,5 @@
 #include "../../include/threads/threads.h"
 
-/* Inner STATIC methods */
-/* ==================================================================== */
-/* Immediate exit: cancel threads instead of waiting for sleep cycles */
-void fast_exit_threads(pthread_t modem_thread, pthread_t stdin_thread) {
-  pthread_cancel(modem_thread);
-  pthread_cancel(stdin_thread);
-
-  /* Wait briefly for cancellation to complete */
-  pthread_join(stdin_thread, NULL);
-  pthread_join(modem_thread, NULL);
-}
-
-/* Normal exit: wait for threads to finish their current operations */
-void normal_exit_threads(pthread_t modem_thread, pthread_t stdin_thread) {
-  pthread_join(stdin_thread, NULL);
-
-  set_terminal_running(false);
-
-  pthread_join(modem_thread, NULL);
-}
-
 /* Outer methods */
 /* ==================================================================== */
 int is_terminal_running(void) {
@@ -48,14 +27,16 @@ void start_threads(pthread_t *modem_thread, pthread_t *stdin_thread) {
   pthread_create(stdin_thread, NULL, read_stdin_thread, NULL);
 }
 
-void wait_for_threads(pthread_t modem_thread, pthread_t stdin_thread) {
-  if (atomic_load(&exit_requested))
-    fast_exit_threads(modem_thread, stdin_thread);
-  else
-    normal_exit_threads(modem_thread, stdin_thread);
+/* Wait for threads to finish their current operations */
+void exit_threads(pthread_t modem_thread, pthread_t stdin_thread) {
+  pthread_join(stdin_thread, NULL);
+
+  set_terminal_running(false);
+
+  pthread_join(modem_thread, NULL);
 }
 
-void cleanup_resources(void) {
+void cleanup(void) {
   close(terminal.fd);
 
   pthread_mutex_destroy(&terminal.serial_mutex);

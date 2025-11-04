@@ -75,9 +75,9 @@ int main(int argc, char *argv[]) {
 
   start_threads(&modem_thread, &stdin_thread);
 
-  wait_for_threads(modem_thread, stdin_thread);
+  exit_threads(modem_thread, stdin_thread);
 
-  cleanup_resources();
+  cleanup();
 
   return 0;
 }

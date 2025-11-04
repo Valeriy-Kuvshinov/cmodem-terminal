@@ -2,8 +2,6 @@
 #include "../../include/modem/call.h"
 #include "../../include/modem/modem.h"
 
-_Alignas(32) _Atomic bool exit_requested = false;
-
 /* Global application state */
 ModemTerminal terminal;
 CallState call_state = {0};
