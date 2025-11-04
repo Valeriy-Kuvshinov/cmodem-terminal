@@ -22,6 +22,7 @@
 #define URGENT_MSG_CLIP "+CLIP"
 #define URGENT_MSG_VOICE_CALL_BEGIN "VOICE CALL: BEGIN"
 #define URGENT_MSG_VOICE_CALL_END "VOICE CALL: END"
+#define URGENT_MSG_MISSED_CALL "MISSED_CALL:"
 #define URGENT_MSG_NO_CARRIER "NO CARRIER"
 #define URGENT_MSG_BUSY "BUSY"
 #define URGENT_MSG_NO_ANSWER "NO ANSWER"
@@ -39,6 +40,8 @@
 
 #define IS_CALL_ID_MESSAGE(line) (strstr(line, URGENT_MSG_CLIP))
 
+#define IS_MISSED_CALL_MESSAGE(line) (strstr(line, URGENT_MSG_MISSED_CALL))
+
 #define IS_CALL_BEGIN_MESSAGE(line) (strstr(line, URGENT_MSG_VOICE_CALL_BEGIN))
 
 #define IS_CALL_END_MESSAGE(line)                                              \
@@ -48,7 +51,8 @@
 
 #define IS_CALL_MESSAGE(line)                                                  \
   (IS_RING_MESSAGE(line) || IS_CALL_ID_MESSAGE(line) ||                        \
-   IS_CALL_END_MESSAGE(line) || IS_CALL_BEGIN_MESSAGE(line))
+   IS_CALL_END_MESSAGE(line) || IS_CALL_BEGIN_MESSAGE(line) ||                 \
+   IS_MISSED_CALL_MESSAGE(line))
 
 #define IS_ERROR_MESSAGE(line)                                                 \
   (strstr(line, URGENT_MSG_CME_ERROR) || strstr(line, URGENT_MSG_CMS_ERROR))
