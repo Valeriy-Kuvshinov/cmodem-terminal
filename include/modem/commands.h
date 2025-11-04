@@ -34,4 +34,7 @@
 #define AT_SEND_SMS "AT+CMGS"
 #define AT_SEND_SMS_LENGTH 7
 
+/* Macros */
+#define IS_ERROR_OK_COMMAND(cmd) (strstr(cmd, ERROR_OK_AT_CHUP))
+
 #endif

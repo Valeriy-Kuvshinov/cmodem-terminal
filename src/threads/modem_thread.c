@@ -3,7 +3,7 @@
 /* Inner STATIC methods */
 /* ==================================================================== */
 static void handle_remaining_buffer(ModemTerminal *term, char *line_start) {
-  if (check_urgent_message(line_start)) {
+  if (IS_URGENT_MESSAGE(line_start)) {
     print_output(MSG_TYPE_URGENT, line_start);
 
     line_start += strlen(line_start);

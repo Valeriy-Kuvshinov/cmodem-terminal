@@ -25,7 +25,6 @@ typedef struct {
 #define MAX_INIT_RETRIES 3
 
 /* Function prototypes */
-int check_urgent_message(const char *buffer);
 int init_modem(ModemTerminal *term);
 
 #endif

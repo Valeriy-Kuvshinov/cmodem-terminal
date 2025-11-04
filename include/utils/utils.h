@@ -1,6 +1,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <ctype.h>
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
@@ -16,5 +17,6 @@ ssize_t safe_write(int fd, const void *buf, size_t count);
 
 void print_output(const char *type, const char *text);
 void msleep(int milliseconds);
+bool is_whitespace_only(const char *str);
 
 #endif

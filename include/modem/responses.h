@@ -1,7 +1,7 @@
 #ifndef RESPONSES_H
 #define RESPONSES_H
 
-/* Response message types */
+/* Update message types */
 #define MSG_TYPE_STATUS "[STATUS]"
 #define MSG_TYPE_ERROR "[ERROR]"
 #define MSG_TYPE_COMPLETE "[COMPLETE]"
@@ -31,22 +31,24 @@
 #define URGENT_MSG_NOT_REGISTERED "+CREG: 0"
 
 /* Macros for message categorization */
+#define IS_SMS_MESSAGE(line)                                                   \
+  (strstr(line, URGENT_MSG_CMTI) || strstr(line, URGENT_MSG_CMT))
+
+#define IS_RING_MESSAGE(line)                                                  \
+  (strstr(line, URGENT_MSG_RING) || strstr(line, URGENT_MSG_CRING))
+
+#define IS_CALL_ID_MESSAGE(line) (strstr(line, URGENT_MSG_CLIP))
+
+#define IS_CALL_BEGIN_MESSAGE(line) (strstr(line, URGENT_MSG_VOICE_CALL_BEGIN))
+
 #define IS_CALL_END_MESSAGE(line)                                              \
   (strstr(line, URGENT_MSG_NO_CARRIER) || strstr(line, URGENT_MSG_BUSY) ||     \
    strstr(line, URGENT_MSG_NO_ANSWER) ||                                       \
    strstr(line, URGENT_MSG_VOICE_CALL_END))
 
-#define IS_CALL_BEGIN_MESSAGE(line) (strstr(line, URGENT_MSG_VOICE_CALL_BEGIN))
-
-#define IS_SMS_MESSAGE(line)                                                   \
-  (strstr(line, URGENT_MSG_CMTI) || strstr(line, URGENT_MSG_CMT))
-
 #define IS_CALL_MESSAGE(line)                                                  \
-  (strstr(line, URGENT_MSG_RING) || strstr(line, URGENT_MSG_CRING) ||          \
-   strstr(line, URGENT_MSG_CLIP) || strstr(line, URGENT_MSG_NO_CARRIER) ||     \
-   strstr(line, URGENT_MSG_BUSY) || strstr(line, URGENT_MSG_NO_ANSWER) ||      \
-   strstr(line, URGENT_MSG_VOICE_CALL_END) ||                                  \
-   strstr(line, URGENT_MSG_VOICE_CALL_BEGIN))
+  (IS_RING_MESSAGE(line) || IS_CALL_ID_MESSAGE(line) ||                        \
+   IS_CALL_END_MESSAGE(line) || IS_CALL_BEGIN_MESSAGE(line))
 
 #define IS_ERROR_MESSAGE(line)                                                 \
   (strstr(line, URGENT_MSG_CME_ERROR) || strstr(line, URGENT_MSG_CMS_ERROR))
@@ -55,7 +57,9 @@
   (strstr(line, URGENT_MSG_SIMCARD_NOT_AVAILABLE) ||                           \
    strstr(line, URGENT_MSG_NOT_REGISTERED))
 
-#define IS_ERROR_OK_COMMAND(cmd) (strstr(cmd, ERROR_OK_AT_CHUP))
+#define IS_URGENT_MESSAGE(line)                                                \
+  (IS_SMS_MESSAGE(line) || IS_CALL_MESSAGE(line) || IS_ERROR_MESSAGE(line) ||  \
+   IS_SIM_ERROR_MESSAGE(line))
 
 #define IS_OK_RESPONSE(line) (strcmp(line, MODEM_RESPONSE_OK) == 0)
 

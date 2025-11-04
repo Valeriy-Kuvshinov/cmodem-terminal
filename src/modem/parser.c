@@ -1,62 +1,90 @@
-#include <string.h>
-
 #include "../../include/modem/parser.h"
 
-static const char *urgent_msg_arr[] = {URGENT_MSG_CMTI,
-                                       URGENT_MSG_CMT,
-                                       URGENT_MSG_RING,
-                                       URGENT_MSG_CRING,
-                                       URGENT_MSG_CLIP,
-                                       URGENT_MSG_VOICE_CALL_BEGIN,
-                                       URGENT_MSG_VOICE_CALL_END,
-                                       URGENT_MSG_NO_CARRIER,
-                                       URGENT_MSG_BUSY,
-                                       URGENT_MSG_NO_ANSWER,
-                                       URGENT_MSG_CME_ERROR,
-                                       URGENT_MSG_CMS_ERROR,
-                                       URGENT_MSG_SIMCARD_NOT_AVAILABLE,
-                                       NULL};
+// Call state tracking to reduce spam
+static bool call_in_progress = false;
+static char last_caller_id[32] = {0};
+static time_t last_ring_time = 0;
 
 /* Inner STATIC methods */
 /* ==================================================================== */
-static void handle_call_end_msg(const char *line) {
-  char msg[MAX_BUFFER];
+static bool is_duplicate_ring_msg(const char *line) {
+  time_t current_time = time(NULL);
 
-  snprintf(msg, sizeof(msg), "CALL_END: %s", line);
-  print_output(MSG_TYPE_COMPLETE, msg);
+  if (IS_RING_MESSAGE(line)) {
+    if (current_time - last_ring_time < 2) // Within 2 seconds
+      return true;
+
+    last_ring_time = current_time;
+
+    return false;
+  }
+  return false;
 }
 
-static void handle_call_begin_msg(const char *line) {
-  char msg[MAX_BUFFER];
+static void handle_call_end(const char *line) {
+  if (call_in_progress) {
+    call_in_progress = false;
+    last_caller_id[0] = NULL_TERMINATOR;
+  }
+}
 
-  snprintf(msg, sizeof(msg), "CALL_CONNECTED: %s", line);
-  print_output(MSG_TYPE_COMPLETE, msg);
+static void handle_call_begin(const char *line) {
+  if (!call_in_progress)
+    call_in_progress = true;
+}
+
+static void extract_caller_id(const char *line, char *caller_id,
+                              size_t max_len) {
+  char *comma, *start, *end;
+
+  comma = strchr(line, ',');
+
+  if (!comma)
+    return;
+
+  start = comma - 1;
+
+  // Find the opening quote
+  while (start > line && *start != '"')
+    start--;
+
+  if (*start != '"')
+    return;
+
+  start++;
+  end = strchr(start, '"');
+
+  if (!end)
+    return;
+
+  size_t len = end - start;
+
+  if (len >= max_len)
+    return;
+
+  strncpy(caller_id, start, len);
+
+  caller_id[len] = NULL_TERMINATOR;
 }
 
 static void handle_call_msg(const char *line) {
-  print_output(MSG_TYPE_CALL, line);
+  if (IS_CALL_ID_MESSAGE(line))
+    extract_caller_id(line, last_caller_id, sizeof(last_caller_id));
 
-  if (IS_CALL_END_MESSAGE(line))
-    handle_call_end_msg(line);
+  if (!is_duplicate_ring_msg(line))
+    print_output(MSG_TYPE_CALL, line);
 
-  else if (IS_CALL_BEGIN_MESSAGE(line))
-    handle_call_begin_msg(line);
+  if (IS_CALL_BEGIN_MESSAGE(line))
+    handle_call_begin(line);
+
+  else if (IS_CALL_END_MESSAGE(line))
+    handle_call_end(line);
 }
 
 /* Outer methods */
 /* ==================================================================== */
-int check_urgent_message(const char *buffer) {
-  int i;
-
-  for (i = 0; urgent_msg_arr[i] != NULL; i++) {
-    if (strstr(buffer, urgent_msg_arr[i]) != NULL)
-      return 1;
-  }
-  return 0;
-}
-
 void categorize_line(const ModemTerminal *term, const char *line) {
-  if (strlen(line) == 0)
+  if (strlen(line) == 0 || is_whitespace_only(line))
     return;
 
   /* SMS notifications */
@@ -72,8 +100,11 @@ void categorize_line(const ModemTerminal *term, const char *line) {
     print_output(MSG_TYPE_ERROR, line);
 
   /* Command is valid */
-  else if (IS_OK_RESPONSE(line))
-    print_output(MSG_TYPE_COMPLETE, MODEM_RESPONSE_OK);
+  else if (IS_OK_RESPONSE(line)) {
+    // Suppress OK responses after call commands to reduce spam
+    if (!call_in_progress || !IS_ERROR_OK_COMMAND(term->last_command))
+      print_output(MSG_TYPE_COMPLETE, MODEM_RESPONSE_OK);
+  }
 
   /* Generic errors */
   else if (strstr(line, MSG_TYPE_ERROR)) {

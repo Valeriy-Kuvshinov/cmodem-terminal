@@ -23,3 +23,13 @@ ssize_t safe_write(int fd, const void *buf, size_t count) {
 
   return ret;
 }
+
+bool is_whitespace_only(const char *str) {
+  while (*str) {
+    if (!isspace((unsigned char)*str))
+      return false;
+
+    str++;
+  }
+  return true;
+}

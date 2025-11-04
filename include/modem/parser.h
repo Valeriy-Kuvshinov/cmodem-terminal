@@ -5,7 +5,7 @@
 #include "modem.h"
 #include "responses.h"
 
-int check_urgent_message(const char *buffer);
+/* Function prototypes */
 void categorize_line(const ModemTerminal *term, const char *line);
 
 #endif
