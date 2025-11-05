@@ -74,12 +74,13 @@ static int process_stdin_line(char *line, int sms_mode) {
     set_terminal_running(false);
 
     return EXIT_SIGNAL;
-  }
-  if (IS_SMS_COMMAND(line)) {
+  } else if (IS_SMS_COMMAND(line)) {
     send_sms_command(line);
 
     return SMS_MODE_ON;
-  } else if (sms_mode) {
+  }
+
+  if (sms_mode) {
     send_sms_content(line);
     complete_sms_sending();
 

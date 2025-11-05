@@ -1,8 +1,6 @@
 #ifndef THREADS_H
 #define THREADS_H
 
-#include <strings.h>
-
 #include "../globals/globals.h"
 #include "../io/serial.h"
 #include "../modem/modem.h"

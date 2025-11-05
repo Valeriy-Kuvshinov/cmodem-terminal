@@ -30,9 +30,6 @@ void start_threads(pthread_t *modem_thread, pthread_t *stdin_thread) {
 /* Wait for threads to finish their current operations */
 void exit_threads(pthread_t modem_thread, pthread_t stdin_thread) {
   pthread_join(stdin_thread, NULL);
-
-  set_terminal_running(false);
-
   pthread_join(modem_thread, NULL);
 }
 
