@@ -1,3 +1,5 @@
+#include <signal.h>
+
 #include "../include/modem/call.h"
 #include "../include/threads/threads.h"
 #include "../include/utils/utils.h"
@@ -21,6 +23,11 @@ static int is_args_valid(int argc, char *argv[], int *quiet_mode) {
   return 1;
 }
 
+static void signal_handler(int signum) {
+  print_output(MSG_TYPE_STATUS, "Shutting down...");
+  set_terminal_running(false);
+}
+
 static int is_connection_stable(int fd) {
   char response[MAX_RESPONSE];
   int n;
@@ -38,6 +45,10 @@ static int is_connection_stable(int fd) {
     if (strstr(response, MODEM_RESPONSE_OK))
       return 1;
   }
+  /* Register signal handlers for graceful shutdown */
+  signal(SIGINT, signal_handler);
+  signal(SIGTERM, signal_handler);
+
   print_output(MSG_TYPE_ERROR, "No response to initial AT command");
 
   return 0;

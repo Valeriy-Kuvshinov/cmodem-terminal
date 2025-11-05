@@ -34,7 +34,16 @@ void exit_threads(pthread_t modem_thread, pthread_t stdin_thread) {
 }
 
 void cleanup(void) {
+  // Flush serial port
+  tcflush(terminal.fd, TCIOFLUSH);
   close(terminal.fd);
+
+  // Clear sensitive buffers
+  memset(terminal.output_buffer, 0, sizeof(terminal.output_buffer));
+  memset(terminal.last_command, 0, sizeof(terminal.last_command));
+
+  // Cleanup call state
+  memset(&call_state, 0, sizeof(CallState));
 
   pthread_mutex_destroy(&terminal.serial_mutex);
   pthread_mutex_destroy(&terminal.running_mutex);

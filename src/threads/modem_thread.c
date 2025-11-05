@@ -86,5 +86,5 @@ void *read_modem_thread(void *arg) {
 
     msleep(THREAD_SLEEP_MS);
   }
-  return NULL;
+  pthread_exit(NULL);
 }

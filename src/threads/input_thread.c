@@ -69,7 +69,7 @@ static void send_command(const char *line) {
   msleep(COMMAND_DELAY_MS);
 }
 
-static int process_stdin_line(char *line, int sms_mode) {
+static int process_line(char *line, int sms_mode) {
   if (IS_EXIT_COMMAND(line)) {
     print_output(MSG_TYPE_STATUS, "Shutting down...");
 
@@ -110,7 +110,7 @@ void *read_stdin_thread(void *arg) {
         continue;
       }
       if (strlen(line) > 0) {
-        int new_mode = process_stdin_line(line, sms_mode);
+        int new_mode = process_line(line, sms_mode);
 
         if (new_mode == EXIT_SIGNAL)
           break;
@@ -121,5 +121,5 @@ void *read_stdin_thread(void *arg) {
     if (!is_terminal_running())
       break;
   }
-  return NULL;
+  pthread_exit(NULL);
 }
