@@ -15,7 +15,6 @@
 #define AT_CLIP_ON "AT+CLIP=1"
 #define AT_EXTENDED_RING_ON "AT+CRC=1"
 #define AT_NETWORK_REGISTRATION_BASIC "AT+CREG=1"
-#define AT_FULL_FUNCTIONALITY "AT+CFUN=1"
 
 /* Modem initialization descriptions */
 #define AT_RESET_DESC "Reset modem to defaults"
@@ -28,7 +27,6 @@
 #define AT_CLIP_ON_DESC "Enable calling line identification"
 #define AT_EXTENDED_RING_ON_DESC "Enable extended format of incoming calls"
 #define AT_NETWORK_REGISTRATION_BASIC_DESC "Enable basic network registration"
-#define AT_FULL_FUNCTIONALITY_DESC "Set full functionality"
 
 /* Modem SMS related */
 #define AT_SEND_SMS "AT+CMGS"

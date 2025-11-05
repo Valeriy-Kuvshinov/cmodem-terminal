@@ -29,12 +29,18 @@ void start_threads(pthread_t *modem_thread, pthread_t *stdin_thread) {
 
 /* Wait for threads to finish their current operations */
 void exit_threads(pthread_t modem_thread, pthread_t stdin_thread) {
+  if (terminal.fd >= 0) {
+    close(terminal.fd);
+
+    terminal.fd = -1; // Prevent double-close in cleanup
+  }
+
   pthread_join(stdin_thread, NULL);
   pthread_join(modem_thread, NULL);
 }
 
 void cleanup_terminal(void) {
-  if (terminal.fd >= 0) {
+  if (terminal.fd >= 0) { // Only close if not pre-closed
     tcflush(terminal.fd, TCIOFLUSH);
     close(terminal.fd);
   }
