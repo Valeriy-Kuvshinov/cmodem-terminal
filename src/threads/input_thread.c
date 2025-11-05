@@ -71,6 +71,8 @@ static void send_command(const char *line) {
 
 static int process_stdin_line(char *line, int sms_mode) {
   if (IS_EXIT_COMMAND(line)) {
+    print_output(MSG_TYPE_STATUS, "Shutting down...");
+
     set_terminal_running(false);
 
     return EXIT_SIGNAL;
