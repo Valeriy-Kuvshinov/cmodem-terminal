@@ -76,7 +76,7 @@ int init_terminal(const char *device_port) {
 void *read_modem_thread(void *arg) {
   char temp_buf[MAX_BUFFER];
 
-  while (is_terminal_running()) {
+  while (terminal.is_running) {
     int n;
 
     n = read(terminal.fd, temp_buf, sizeof(temp_buf) - 1);

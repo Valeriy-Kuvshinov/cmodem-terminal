@@ -2,23 +2,16 @@
 
 /* Outer methods */
 /* ==================================================================== */
-int is_terminal_running(void) {
-  int running;
-
-  pthread_mutex_lock(&terminal.running_mutex);
-
-  running = terminal.is_running;
-
-  pthread_mutex_unlock(&terminal.running_mutex);
-
-  return running;
-}
-
 void set_terminal_running(bool value) {
   pthread_mutex_lock(&terminal.running_mutex);
 
   terminal.is_running = value;
 
+  if (!value && terminal.fd >= 0) {
+    close(terminal.fd);
+
+    terminal.fd = -1;
+  }
   pthread_mutex_unlock(&terminal.running_mutex);
 }
 
@@ -29,12 +22,6 @@ void start_threads(pthread_t *modem_thread, pthread_t *stdin_thread) {
 
 /* Wait for threads to finish their current operations */
 void exit_threads(pthread_t modem_thread, pthread_t stdin_thread) {
-  if (terminal.fd >= 0) {
-    close(terminal.fd);
-
-    terminal.fd = -1; // Prevent double-close in cleanup
-  }
-
   pthread_join(stdin_thread, NULL);
   pthread_join(modem_thread, NULL);
 }

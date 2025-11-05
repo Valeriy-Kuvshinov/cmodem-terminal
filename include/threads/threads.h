@@ -38,7 +38,6 @@ void exit_threads(pthread_t modem_thread, pthread_t stdin_thread);
 void cleanup_terminal();
 
 /* Thread state */
-int is_terminal_running(void);
 void set_terminal_running(bool value);
 
 /* Thread functions */

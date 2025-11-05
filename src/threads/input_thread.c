@@ -100,7 +100,7 @@ void *read_stdin_thread(void *arg) {
   char line[MAX_COMMAND];
   int sms_mode = false;
 
-  while (is_terminal_running()) {
+  while (terminal.is_running) {
     if (fgets(line, sizeof(line), stdin) != NULL) {
       if (!sanitize_input(line, sizeof(line))) {
         clear_stdin_buffer();
