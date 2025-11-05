@@ -51,7 +51,7 @@ static void cleanup(void) {
   cleanup_call_state();
   cleanup_terminal();
 
-  print_output(MSG_TYPE_STATUS, "Terminal securely shut down");
+  print_output(MSG_TYPE_STATUS, "Terminal has shut down");
 }
 
 /* App main method */
