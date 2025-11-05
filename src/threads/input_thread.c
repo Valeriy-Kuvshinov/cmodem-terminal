@@ -118,8 +118,6 @@ void *read_stdin_thread(void *arg) {
         sms_mode = new_mode;
       }
     }
-    if (!is_terminal_running())
-      break;
   }
   pthread_exit(NULL);
 }

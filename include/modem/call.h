@@ -17,5 +17,6 @@ extern CallState call_state;
 /* Function prototypes */
 void init_call_state(void);
 void handle_call_message(const char *line);
+void cleanup_call_state(void);
 
 #endif

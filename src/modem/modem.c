@@ -139,5 +139,7 @@ int init_modem(void) {
     if (attempt_init(cmd, desc))
       msleep(MODEM_RESPONSE_DELAY_MS);
   }
+  print_output(MSG_TYPE_STATUS, "INIT COMPLETE");
+
   return 1;
 }

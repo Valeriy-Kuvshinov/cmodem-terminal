@@ -67,3 +67,5 @@ void handle_call_message(const char *line) {
   else if (IS_CALL_END_MESSAGE(line))
     handle_call_end(line);
 }
+
+void cleanup_call_state(void) { memset(&call_state, 0, sizeof(CallState)); }

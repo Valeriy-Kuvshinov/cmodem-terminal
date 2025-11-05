@@ -35,7 +35,7 @@
 int init_terminal(const char *device_port);
 void start_threads(pthread_t *modem_thread, pthread_t *stdin_thread);
 void exit_threads(pthread_t modem_thread, pthread_t stdin_thread);
-void cleanup();
+void cleanup_terminal();
 
 /* Thread state */
 int is_terminal_running(void);

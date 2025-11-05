@@ -33,20 +33,16 @@ void exit_threads(pthread_t modem_thread, pthread_t stdin_thread) {
   pthread_join(modem_thread, NULL);
 }
 
-void cleanup(void) {
-  // Flush serial port
-  tcflush(terminal.fd, TCIOFLUSH);
-  close(terminal.fd);
+void cleanup_terminal(void) {
+  if (terminal.fd >= 0) {
+    tcflush(terminal.fd, TCIOFLUSH);
+    close(terminal.fd);
+  }
 
-  // Clear sensitive buffers
+  // Clear sensitive buffers immediately
   memset(terminal.output_buffer, 0, sizeof(terminal.output_buffer));
   memset(terminal.last_command, 0, sizeof(terminal.last_command));
 
-  // Cleanup call state
-  memset(&call_state, 0, sizeof(CallState));
-
   pthread_mutex_destroy(&terminal.serial_mutex);
   pthread_mutex_destroy(&terminal.running_mutex);
-
-  print_output(MSG_TYPE_STATUS, "Modem terminal stopped");
 }
