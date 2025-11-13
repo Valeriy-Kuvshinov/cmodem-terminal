@@ -6,11 +6,11 @@
 
 /* Inner STATIC methods */
 /* ==================================================================== */
-static int is_args_valid(int argc, char *argv[], int *quiet_mode) {
+static bool is_args_valid(int argc, char *argv[], int *quiet_mode) {
   if (argc < 2 || argc > 4) {
     fprintf(stderr, "Usage: %s <device_port> [--quiet]%c", argv[0], NEWLINE);
 
-    return 0;
+    return false;
   }
 
   *quiet_mode = HAS_QUIET_MODE_FLAG(argc, argv);
@@ -18,14 +18,14 @@ static int is_args_valid(int argc, char *argv[], int *quiet_mode) {
   if (argc == 3 && !HAS_QUIET_MODE_FLAG(argc, argv)) {
     fprintf(stderr, "Usage: %s <device_port> [--quiet]%c", argv[0], NEWLINE);
 
-    return 0;
+    return false;
   }
-  return 1;
+  return true;
 }
 
 static void signal_handler(int signum) { set_terminal_running(false); }
 
-static int is_connection_stable(int fd) {
+static bool is_connection_stable(int fd) {
   char response[MAX_RESPONSE];
   int n;
 
@@ -40,11 +40,11 @@ static int is_connection_stable(int fd) {
     response[n] = NULL_TERMINATOR;
 
     if (strstr(response, MODEM_RESPONSE_OK))
-      return 1;
+      return true;
   }
   print_output(MSG_TYPE_ERROR, "No response to initial AT command");
 
-  return 0;
+  return false;
 }
 
 static void cleanup(void) {

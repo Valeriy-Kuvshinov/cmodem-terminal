@@ -32,7 +32,7 @@
 
 /* Function prototypes */
 /* Thread lifecycle */
-int init_terminal(const char *device_port);
+bool init_terminal(const char *device_port);
 void start_threads(pthread_t *modem_thread, pthread_t *stdin_thread);
 void exit_threads(pthread_t modem_thread, pthread_t stdin_thread);
 void cleanup_terminal();

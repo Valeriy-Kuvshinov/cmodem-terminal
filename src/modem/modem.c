@@ -84,7 +84,7 @@ static void log_init_failure_retry(const char *desc, int attempt,
   print_output(MSG_TYPE_WARNING, status);
 }
 
-static int process_response(const char *response, int n, int attempt,
+static bool process_response(const char *response, int n, int attempt,
                             const char *desc) {
   if (strstr(response, MODEM_RESPONSE_OK))
     return true;
@@ -105,9 +105,8 @@ static int process_response(const char *response, int n, int attempt,
   }
 }
 
-static int attempt_init(const char *cmd, const char *desc) {
+static bool attempt_init(const char *cmd, const char *desc) {
   int attempt;
-  int success = false;
 
   for (attempt = 0; attempt < MAX_INIT_RETRIES; attempt++) {
     char response[MAX_BUFFER] = {0};
@@ -117,19 +116,18 @@ static int attempt_init(const char *cmd, const char *desc) {
 
     n = send_command(cmd, response, sizeof(response));
 
-    if (n > 0 && process_response(response, n, attempt, desc)) {
-      success = true;
-
-      break;
-    }
+    if (n > 0 && process_response(response, n, attempt, desc))
+      return true;
   }
-  return success;
+  return false;
 }
 
 /* Outer methods */
 /* ==================================================================== */
-int init_modem(void) {
+bool init_modem(void) {
   int i;
+
+  msleep(MODEM_RESPONSE_DELAY_MS);
 
   for (i = 0; init_commands[i][0] != NULL; i++) {
     const char *cmd = init_commands[i][0];
@@ -140,5 +138,5 @@ int init_modem(void) {
   }
   print_output(MSG_TYPE_STATUS, "INIT COMPLETE");
 
-  return 1;
+  return true;
 }

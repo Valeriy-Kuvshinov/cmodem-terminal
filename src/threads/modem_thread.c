@@ -53,7 +53,7 @@ static void process_received_data(char *temp_buf, int n) {
 
 /* Outer methods */
 /* ==================================================================== */
-int init_terminal(const char *device_port) {
+bool init_terminal(const char *device_port) {
   memset(&terminal, 0, sizeof(ModemTerminal));
 
   terminal.is_running = true;

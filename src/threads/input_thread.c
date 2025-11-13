@@ -2,18 +2,18 @@
 
 /* Inner STATIC methods */
 /* ==================================================================== */
-static int sanitize_input(char *line, size_t buffer_size) {
+static bool sanitize_input(char *line, size_t buffer_size) {
   line[buffer_size - 1] = NULL_TERMINATOR;
 
   if (!HAS_NEWLINE(line) && IS_BUFFER_FULL(line, buffer_size))
-    return 0;
+    return false;
 
   size_t length = strlen(line);
 
   if (length > 0 && line[length - 1] == NEWLINE)
     line[length - 1] = NULL_TERMINATOR;
 
-  return 1;
+  return true;
 }
 
 static void clear_stdin_buffer(void) {

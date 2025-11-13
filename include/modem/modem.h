@@ -27,6 +27,6 @@ typedef struct {
 extern ModemTerminal terminal;
 
 /* Function prototypes */
-int init_modem(void);
+bool init_modem(void);
 
 #endif
