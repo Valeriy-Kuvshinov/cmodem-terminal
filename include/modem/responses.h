@@ -43,6 +43,6 @@
 	(IS_SMS_MESSAGE(line) || IS_CALL_MESSAGE(line) ||                          \
 	 IS_ERROR_MESSAGE(line) || IS_SIM_ERROR_MESSAGE(line))
 
-#define IS_OK_RESPONSE(line) (strcmp(line, "OK") == 0)
+#define IS_OK_RESPONSE(line) (strstr(line, "OK") == 0)
 
 #endif
