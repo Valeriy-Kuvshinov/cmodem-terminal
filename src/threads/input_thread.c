@@ -23,17 +23,10 @@ static void clear_stdin_buffer(void) {
 		;
 }
 
-static void send_sms_command(const char *line) {
-	pthread_mutex_lock(&terminal.serial_mutex);
+static void record_last_command(const char *cmd) {
+	strncpy(terminal.last_command, cmd, sizeof(terminal.last_command) - 1);
 
-	strncpy(terminal.last_command, AT_SEND_SMS, sizeof(terminal.last_command));
-
-	safe_write(terminal.fd, line, strlen(line));
-	safe_write(terminal.fd, CRLF, CRLF_LENGTH);
-
-	pthread_mutex_unlock(&terminal.serial_mutex);
-
-	msleep(SMS_SEND_DELAY_MS);
+	terminal.last_command[sizeof(terminal.last_command) - 1] = NULL_TERMINATOR;
 }
 
 static void complete_sms_sending() {
@@ -44,8 +37,6 @@ static void complete_sms_sending() {
 	safe_write(terminal.fd, &sms_end_marker, 1);
 
 	pthread_mutex_unlock(&terminal.serial_mutex);
-
-	msleep(COMMAND_DELAY_MS);
 }
 
 static void send_sms_content(const char *line) {
@@ -56,17 +47,24 @@ static void send_sms_content(const char *line) {
 	pthread_mutex_unlock(&terminal.serial_mutex);
 }
 
-static void send_command(const char *line) {
+static void send_raw_command(const char *cmd, const char *record_cmd) {
 	pthread_mutex_lock(&terminal.serial_mutex);
 
-	strncpy(terminal.last_command, line, sizeof(terminal.last_command));
+	if (record_cmd)
+		record_last_command(record_cmd);
+	else
+		record_last_command(cmd);
 
-	safe_write(terminal.fd, line, strlen(line));
+	safe_write(terminal.fd, cmd, strlen(cmd));
 	safe_write(terminal.fd, CRLF, CRLF_LENGTH);
 
 	pthread_mutex_unlock(&terminal.serial_mutex);
+}
 
-	msleep(COMMAND_DELAY_MS);
+static void send_command(const char *line) { send_raw_command(line, NULL); }
+
+static void send_sms_command(const char *line) {
+	send_raw_command(line, AT_SEND_SMS);
 }
 
 static int process_line(char *line, int sms_mode) {
@@ -78,6 +76,7 @@ static int process_line(char *line, int sms_mode) {
 		return EXIT_SIGNAL;
 	} else if (IS_SMS_COMMAND(line)) {
 		send_sms_command(line);
+		msleep(SMS_SEND_DELAY_MS);
 
 		return SMS_MODE_ON;
 	}
@@ -85,10 +84,12 @@ static int process_line(char *line, int sms_mode) {
 	if (sms_mode) {
 		send_sms_content(line);
 		complete_sms_sending();
+		msleep(COMMAND_DELAY_MS);
 
 		return SMS_MODE_OFF;
 	} else {
 		send_command(line);
+		msleep(COMMAND_DELAY_MS);
 
 		return SMS_MODE_OFF;
 	}
