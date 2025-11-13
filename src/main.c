@@ -28,32 +28,20 @@ static void signal_handler(int signum) { set_terminal_running(false); }
 
 static bool is_connection_stable(int fd) {
 	char response[MAX_RESPONSE];
-	int n;
+	int bytes_read;
 
 	print_output(MSG_TYPE_STATUS, "Testing modem connection...");
 
 	safe_write(fd, AT_CRLF, AT_CRLF_LENGTH);
-	sleep(2);
+	sleep(INIT_RETRY_DELAY_SEC);
 
-	n = read(fd, response, sizeof(response) - 1);
+	bytes_read = read(fd, response, sizeof(response) - 1);
 
-	if (n > 0) {
-		response[n] = NULL_TERMINATOR;
-		char debug_msg[200]; // Increase buffer size
-		char truncated_response[50];
-		strncpy(truncated_response, response, sizeof(truncated_response) - 1);
-		truncated_response[sizeof(truncated_response) - 1] = '\0';
+	if (bytes_read > 0) {
+		response[bytes_read] = NULL_TERMINATOR;
 
-		snprintf(debug_msg, sizeof(debug_msg), "Received: '%s...' (length: %d)",
-				 truncated_response, n);
-		print_output(MSG_TYPE_INFO, debug_msg);
-
-		if (strstr(response, "OK"))
+		if (IS_OK_RESPONSE(response))
 			return true;
-	} else {
-		char debug_msg[50];
-		snprintf(debug_msg, sizeof(debug_msg), "Read returned: %d", n);
-		print_output(MSG_TYPE_INFO, debug_msg);
 	}
 	print_output(MSG_TYPE_ERROR, "No response to initial AT command");
 
