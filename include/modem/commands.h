@@ -4,7 +4,7 @@
 /* Error-OK commands */
 #define ERROR_OK_AT_CHUP "AT+CHUP"
 
-/* Modem initialization commands */
+/* Modem init commands */
 #define AT_RESET "ATZ"
 #define AT_ECHO_OFF "ATE0"
 #define AT_NUMERIC_ERRORS_ON "AT+CMEE=1"
@@ -16,7 +16,7 @@
 #define AT_EXTENDED_RING_ON "AT+CRC=1"
 #define AT_NETWORK_REGISTRATION_BASIC "AT+CREG=1"
 
-/* Modem initialization descriptions */
+/* Modem init command descriptions */
 #define AT_RESET_DESC "Reset modem to defaults"
 #define AT_ECHO_OFF_DESC "Disable command echo"
 #define AT_NUMERIC_ERRORS_ON_DESC "Enable numeric error codes"
