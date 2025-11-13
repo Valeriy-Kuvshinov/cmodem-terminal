@@ -4,9 +4,7 @@ static const char *init_commands[][2] = {
 	{AT_RESET, AT_RESET_DESC},
 	{AT_NUMERIC_ERRORS_ON, AT_NUMERIC_ERRORS_ON_DESC},
 	{AT_CHARACTERS_SET_UCS2, AT_CHARACTERS_SET_UCS2_DESC},
-	{AT_SMS_PDU_ON, AT_SMS_PDU_ON_DESC},
 	{AT_STORAGE_ME, AT_STORAGE_ME_DESC},
-	{AT_NEW_NOTIFICATIONS, AT_NEW_NOTIFICATIONS_DESC},
 	{AT_CLIP_ON, AT_CLIP_ON_DESC},
 	{AT_EXTENDED_RING_ON, AT_EXTENDED_RING_ON_DESC},
 	{AT_NETWORK_REGISTRATION_BASIC, AT_NETWORK_REGISTRATION_BASIC_DESC},
@@ -33,7 +31,10 @@ static void log_failure_final(const char *desc, const char *response) {
 
 static int send_init_command(const char *cmd, char *response,
 							 size_t response_size) {
-	int bytes_read;
+	int bytes_read = 0;
+	int ready;
+	struct timeval timeout;
+	fd_set readfds;
 
 	pthread_mutex_lock(&terminal.serial_mutex);
 
@@ -42,12 +43,22 @@ static int send_init_command(const char *cmd, char *response,
 
 	pthread_mutex_unlock(&terminal.serial_mutex);
 
-	msleep(MODEM_RESPONSE_DELAY_MS);
+	// Wait for response with timeout
+	FD_ZERO(&readfds);
+	FD_SET(terminal.fd, &readfds);
+	timeout.tv_sec = 5; // 5 second timeout
+	timeout.tv_usec = 0;
 
-	bytes_read = read(terminal.fd, response, response_size - 1);
+	ready = select(terminal.fd + 1, &readfds, NULL, NULL, &timeout);
 
-	if (bytes_read > 0)
-		response[bytes_read] = NULL_TERMINATOR;
+	if (ready > 0) {
+		bytes_read = read(terminal.fd, response, response_size - 1);
+
+		if (bytes_read > 0)
+			response[bytes_read] = NULL_TERMINATOR;
+
+	} else if (ready == 0) // Timeout
+		bytes_read = 0;
 
 	return bytes_read;
 }
