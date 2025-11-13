@@ -24,14 +24,14 @@ void categorize_line(const char *line) {
 		// Suppress OK responses after call commands to reduce spam
 		if (!call_state.call_in_progress ||
 			!IS_ERROR_OK_COMMAND(terminal.last_command))
-			print_output(MSG_TYPE_COMPLETE, MODEM_RESPONSE_OK);
+			print_output(MSG_TYPE_COMPLETE, "OK");
 	}
 
 	/* Generic errors */
 	else if (strstr(line, MSG_TYPE_ERROR)) {
 		/* False positive errors */
 		if (IS_ERROR_OK_COMMAND(terminal.last_command))
-			print_output(MSG_TYPE_COMPLETE, MODEM_RESPONSE_OK);
+			print_output(MSG_TYPE_COMPLETE, "OK");
 
 		else
 			print_output(MSG_TYPE_ERROR, line);

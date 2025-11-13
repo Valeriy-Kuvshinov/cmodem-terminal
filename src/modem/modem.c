@@ -2,7 +2,6 @@
 
 static const char *init_commands[][2] = {
 	{AT_RESET, AT_RESET_DESC},
-	// {AT_ECHO_OFF, AT_ECHO_OFF_DESC},
 	{AT_NUMERIC_ERRORS_ON, AT_NUMERIC_ERRORS_ON_DESC},
 	{AT_CHARACTERS_SET_UCS2, AT_CHARACTERS_SET_UCS2_DESC},
 	{AT_SMS_PDU_ON, AT_SMS_PDU_ON_DESC},
@@ -87,7 +86,7 @@ static void log_failure(const char *desc, int attempt, const char *response) {
 
 static bool process_response(const char *response, int bytes_read, int attempt,
 							 const char *desc) {
-	if (strstr(response, MODEM_RESPONSE_OK))
+	if (IS_OK_RESPONSE(response))
 		return true;
 
 	else if (bytes_read == 0 || IS_ERROR_MESSAGE(response)) {
@@ -127,8 +126,6 @@ static bool run_init_command(const char *cmd, const char *desc) {
 /* ==================================================================== */
 bool init_modem(void) {
 	int i;
-
-	msleep(MODEM_RESPONSE_DELAY_MS);
 
 	for (i = 0; init_commands[i][0] != NULL; i++) {
 		const char *cmd = init_commands[i][0];

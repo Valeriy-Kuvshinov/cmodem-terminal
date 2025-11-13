@@ -8,17 +8,16 @@
 /* ==================================================================== */
 static bool is_args_valid(int argc, char *argv[], int *quiet_mode) {
 	if (argc < 2 || argc > 4) {
-		fprintf(stderr, "Usage: %s <device_port> [--quiet]%c", argv[0],
-				NEWLINE);
+		fprintf(stderr, "Usage: %s <device_port> [%s]%c", argv[0],
+				QUIET_MODE_FLAG, NEWLINE);
 
 		return false;
 	}
-
 	*quiet_mode = HAS_QUIET_MODE_FLAG(argc, argv);
 
 	if (argc == 3 && !HAS_QUIET_MODE_FLAG(argc, argv)) {
-		fprintf(stderr, "Usage: %s <device_port> [--quiet]%c", argv[0],
-				NEWLINE);
+		fprintf(stderr, "Usage: %s <device_port> [%s]%c", argv[0],
+				QUIET_MODE_FLAG, NEWLINE);
 
 		return false;
 	}
@@ -41,7 +40,7 @@ static bool is_connection_stable(int fd) {
 	if (n > 0) {
 		response[n] = NULL_TERMINATOR;
 
-		if (strstr(response, MODEM_RESPONSE_OK))
+		if (IS_OK_RESPONSE(response))
 			return true;
 	}
 	print_output(MSG_TYPE_ERROR, "No response to initial AT command");

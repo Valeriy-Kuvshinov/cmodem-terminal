@@ -1,12 +1,8 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
-/* Error-OK commands */
-#define ERROR_OK_AT_CHUP "AT+CHUP"
-
 /* Modem init commands */
 #define AT_RESET "ATZ"
-#define AT_ECHO_OFF "ATE0"
 #define AT_NUMERIC_ERRORS_ON "AT+CMEE=1"
 #define AT_CHARACTERS_SET_UCS2 "AT+CSCS=\"UCS2\""
 #define AT_SMS_PDU_ON "AT+CMGF=0"
@@ -18,7 +14,6 @@
 
 /* Modem init command descriptions */
 #define AT_RESET_DESC "Reset modem to defaults"
-#define AT_ECHO_OFF_DESC "Disable command echo"
 #define AT_NUMERIC_ERRORS_ON_DESC "Enable numeric error codes"
 #define AT_CHARACTERS_SET_UCS2_DESC "Set character set to UCS2"
 #define AT_SMS_PDU_ON_DESC "Set SMS to PDU mode"
@@ -33,6 +28,7 @@
 #define AT_SEND_SMS_LENGTH 7
 
 /* Macros */
-#define IS_ERROR_OK_COMMAND(cmd) (strstr(cmd, ERROR_OK_AT_CHUP))
+/* Error-OK commands */
+#define IS_ERROR_OK_COMMAND(cmd) (strstr(cmd, "AT+CHUP"))
 
 #endif
