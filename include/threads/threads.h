@@ -21,7 +21,7 @@
 
 /* Macros for SMS handling */
 #define IS_SMS_COMMAND(line)                                                   \
-  (strncmp(line, AT_SEND_SMS "=", AT_SEND_SMS_LENGTH + 1) == 0)
+	(strncmp(line, AT_SEND_SMS "=", AT_SEND_SMS_LENGTH + 1) == 0)
 
 /* Macros for input validation */
 #define HAS_NEWLINE(str) (strchr((str), NEWLINE) != NULL)

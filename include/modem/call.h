@@ -8,8 +8,8 @@
 
 // Call state tracking
 typedef struct {
-  bool call_in_progress;
-  char last_caller_id[CALLER_ID_LENGTH];
+	bool call_in_progress;
+	char last_caller_id[CALLER_ID_LENGTH];
 } CallState;
 
 extern CallState call_state;
