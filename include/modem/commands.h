@@ -3,6 +3,7 @@
 
 /* Modem init commands */
 #define AT_RESET "ATZ"
+#define AT_ECHO_OFF "ATE0"
 #define AT_NUMERIC_ERRORS_ON "AT+CMEE=1"
 #define AT_CHARACTERS_SET_UCS2 "AT+CSCS=\"UCS2\""
 #define AT_STORAGE_ME "AT+CPMS=\"ME\",\"ME\",\"ME\""
@@ -12,6 +13,7 @@
 
 /* Modem init command descriptions */
 #define AT_RESET_DESC "Reset modem to defaults"
+#define AT_ECHO_OFF_DESC "Disable command echo"
 #define AT_NUMERIC_ERRORS_ON_DESC "Enable numeric error codes"
 #define AT_CHARACTERS_SET_UCS2_DESC "Set character set to UCS2"
 #define AT_STORAGE_ME_DESC "Set storage to ME"
