@@ -121,8 +121,8 @@ static bool run_init_command(const char *cmd, const char *desc) {
 	int attempt;
 
 	for (attempt = 0; attempt < MAX_INIT_RETRIES; attempt++) {
-		char response[MAX_BUFFER] = {0};
 		int bytes_read;
+		char response[MAX_BUFFER] = {0};
 
 		log_init_command(desc, attempt);
 

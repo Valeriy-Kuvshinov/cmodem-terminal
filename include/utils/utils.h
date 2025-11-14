@@ -20,4 +20,8 @@ void print_output(const char *type, const char *text);
 void msleep(int milliseconds);
 bool is_whitespace_only(const char *str);
 
+/* Macros */
+#define IS_REAL_ERROR(bytes_read)                                              \
+	((bytes_read) < 0 && errno != EAGAIN && errno != EWOULDBLOCK)
+
 #endif
