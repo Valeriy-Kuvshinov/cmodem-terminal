@@ -63,10 +63,6 @@ bool init_terminal(const char *device_port) {
 	pthread_mutex_init(&terminal.serial_mutex, NULL);
 	pthread_mutex_init(&terminal.running_mutex, NULL);
 
-	// Set file descriptor to non-blocking mode for proper shutdown
-	flags = fcntl(terminal.fd, F_GETFL, 0);
-	fcntl(terminal.fd, F_SETFL, flags | O_NONBLOCK);
-
 	terminal.fd =
 		open_serial_port(device_port, MAX_PORT_RETRIES, PORT_RETRY_DELAY_SEC);
 
@@ -76,6 +72,11 @@ bool init_terminal(const char *device_port) {
 
 		return false;
 	}
+
+	// Set file descriptor to non-blocking mode for proper shutdown
+	flags = fcntl(terminal.fd, F_GETFL, 0);
+	fcntl(terminal.fd, F_SETFL, flags | O_NONBLOCK);
+
 	return true;
 }
 
