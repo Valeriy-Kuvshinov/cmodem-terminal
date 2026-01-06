@@ -2,6 +2,8 @@
 #define COMMANDS_H
 
 /* Modem init commands */
+#define AT_TEST "AT"
+
 #define AT_RESET "ATZ"
 #define AT_ECHO_OFF "ATE0"
 #define AT_NUMERIC_ERRORS_ON "AT+CMEE=1"
@@ -12,6 +14,8 @@
 #define AT_NETWORK_REGISTRATION_BASIC "AT+CREG=1"
 
 /* Modem init command descriptions */
+#define AT_TEST_DESC "Test modem connection"
+
 #define AT_RESET_DESC "Reset modem to defaults"
 #define AT_ECHO_OFF_DESC "Disable command echo"
 #define AT_NUMERIC_ERRORS_ON_DESC "Enable numeric error codes"

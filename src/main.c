@@ -26,28 +26,6 @@ static bool is_args_valid(int argc, char *argv[], int *quiet_mode) {
 
 static void signal_handler(int signum) { set_terminal_running(false); }
 
-static bool is_connection_stable(int fd) {
-	char response[MAX_RESPONSE];
-	int bytes_read;
-
-	print_output(MSG_TYPE_STATUS, "Testing modem connection...");
-
-	safe_write(fd, AT_CRLF, AT_CRLF_LENGTH);
-	sleep(INIT_RETRY_DELAY_SEC);
-
-	bytes_read = read(fd, response, sizeof(response) - 1);
-
-	if (bytes_read > 0) {
-		response[bytes_read] = NULL_TERMINATOR;
-
-		if (IS_OK_RESPONSE(response))
-			return true;
-	}
-	print_output(MSG_TYPE_ERROR, "No response to initial AT command");
-
-	return false;
-}
-
 static void cleanup(void) {
 	cleanup_call_state();
 	cleanup_terminal();
@@ -70,12 +48,11 @@ int main(int argc, char *argv[]) {
 	if (!init_terminal(device_port))
 		return 1;
 
-	if (!is_connection_stable(terminal.fd) || !init_modem()) {
+	if (!init_modem()) {
 		close(terminal.fd);
 
 		return 1;
 	}
-
 	/* Register signal handlers for graceful shutdown */
 	signal(SIGINT, signal_handler);
 	signal(SIGTERM, signal_handler);
@@ -86,7 +63,6 @@ int main(int argc, char *argv[]) {
 		printf("You may start writing AT commands.%c", NEWLINE);
 		printf("Type '%s' to quit terminal.%c", EXIT_APP_COMMAND, NEWLINE);
 	}
-
 	start_threads(&modem_thread, &stdin_thread);
 
 	exit_threads(modem_thread, stdin_thread);

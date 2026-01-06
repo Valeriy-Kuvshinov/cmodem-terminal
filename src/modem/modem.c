@@ -139,12 +139,18 @@ static bool run_init_command(const char *cmd, const char *desc) {
 bool init_modem(void) {
 	int i;
 
+	/* Check if modem is responsive to AT commands */
+	if (!run_init_command(AT_TEST, AT_TEST_DESC))
+		return false;
+
 	for (i = 0; init_commands[i][0] != NULL; i++) {
 		const char *cmd = init_commands[i][0];
 		const char *desc = init_commands[i][1];
 
-		if (run_init_command(cmd, desc))
-			msleep(MODEM_RESPONSE_DELAY_MS);
+		if (!run_init_command(cmd, desc))
+			return false;
+
+		msleep(MODEM_RESPONSE_DELAY_MS);
 	}
 	print_output(MSG_TYPE_STATUS, "INIT COMPLETE");
 

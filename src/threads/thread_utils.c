@@ -31,7 +31,6 @@ void cleanup_terminal(void) {
 		tcflush(terminal.fd, TCIOFLUSH);
 		close(terminal.fd);
 	}
-
 	// Clear sensitive buffers immediately
 	memset(terminal.output_buffer, 0, sizeof(terminal.output_buffer));
 	memset(terminal.last_command, 0, sizeof(terminal.last_command));
