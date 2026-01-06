@@ -1,6 +1,7 @@
 # CModem-Terminal
 
-A powerful, lightweight C terminal for controlling GSM/GPRS modems through serial interfaces. Send SMS, manage calls, and execute AT commands reliably.
+A powerful, lightweight C terminal for controlling GSM/GPRS modems through serial interfaces.  
+Send SMS, manage calls, and execute AT commands reliably.
 
 ## Features
 
@@ -35,6 +36,7 @@ make
 
 # Connect to serial modem with quiet mode
 ./modem_terminal /dev/ttyUSB2 -quiet
+```
 
 ### Command Line Options
 
@@ -43,10 +45,9 @@ make
 
 ### Interactive Commands
 
-Once connected, you can send AT commands directly:
+Once connected, you may send AT commands directly:
 
-```
-
+```bash
 AT # Test modem connection
 AT+CSQ # Check signal quality
 ATD+1234567890; # Make a call
@@ -54,12 +55,11 @@ AT+CHUP # Hang up call
 AT+CMGF=1 # Set SMS to text mode
 AT+CMGS="+1234567890" # Send SMS
 exit # Quit the terminal
-
 ```
 
 ## Configuration
 
-The application uses `app_config.txt` for configuration:
+The application uses `app_config.txt` for configuration.
 
 ### Supported Configuration Options
 
@@ -69,6 +69,6 @@ The application uses `app_config.txt` for configuration:
 
 ## License
 
-CModem-Terminal project is licensed under the MIT License - see [LICENSE](LICENSE) for details.
-
-```
+Copyright (C) Valeriy Kuvshinov.  
+For private and commercial use.  
+View [MIT LICENSE](LICENSE) for details.
