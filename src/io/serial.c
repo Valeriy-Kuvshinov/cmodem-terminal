@@ -44,8 +44,8 @@ static int configure_serial_port(int fd) {
 
 		return -1;
 	}
-	cfsetospeed(&tty, BAUDRATE);
-	cfsetispeed(&tty, BAUDRATE);
+	cfsetospeed(&tty, config.baudrate);
+	cfsetispeed(&tty, config.baudrate);
 
 	tty.c_cflag = (tty.c_cflag & ~CSIZE) | CS8;
 	tty.c_iflag &= ~IGNBRK;

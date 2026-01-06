@@ -6,6 +6,7 @@
 #include <string.h>
 #include <termios.h>
 
+#include "../config.h"
 #include "../globals/buffers.h"
 #include "../modem/responses.h"
 #include "../utils/utils.h"
@@ -33,9 +34,6 @@
 #define CSTOPB 0000100
 #define CRTSCTS 0x80000000
 #define TCSANOW 0
-
-/* Baud rates */
-#define BAUDRATE 230400
 
 /* Termios settings */
 #define SERIAL_VMIN 0

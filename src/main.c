@@ -1,5 +1,6 @@
 #include <signal.h>
 
+#include "../include/config.h"
 #include "../include/modem/call.h"
 #include "../include/threads/threads.h"
 #include "../include/utils/utils.h"
@@ -44,6 +45,12 @@ int main(int argc, char *argv[]) {
 		return 1;
 
 	device_port = argv[1];
+
+	if (!load_config()) {
+		printf("Failed to load %s%c", CONFIG_FILE_NAME, NEWLINE);
+
+		return 1;
+	}
 
 	if (!init_terminal(device_port))
 		return 1;

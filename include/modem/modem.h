@@ -4,6 +4,7 @@
 #include <pthread.h>
 #include <stdbool.h>
 
+#include "../config.h"
 #include "../globals/buffers.h"
 #include "../globals/chars.h"
 #include "../globals/time.h"

@@ -1,0 +1,38 @@
+# Modem Configuration File
+# This file contains AT commands and settings for the modem terminal
+# Format: key = value
+# Lines starting with # are comments
+
+# Serial port baudrate
+baudrate = 230400
+
+# AT commands to send during modem initialization
+# Format: command_N = AT_COMMAND
+# Format: description_N = Description text
+
+command_0 = AT
+description_0 = Test modem connection
+
+command_1 = ATZ
+description_1 = Reset modem to defaults
+
+command_2 = ATE0
+description_2 = Disable command echo
+
+command_3 = AT+CMEE=1
+description_3 = Enable numeric error codes
+
+command_4 = AT+CSCS="UCS2"
+description_4 = Set character set to UCS2
+
+command_5 = AT+CPMS="ME","ME","ME"
+description_5 = Set storage to ME
+
+command_6 = AT+CLIP=1
+description_6 = Enable calling line identification
+
+command_7 = AT+CRC=1
+description_7 = Enable extended format of incoming calls
+
+command_8 = AT+CREG=1
+description_8 = Enable basic network registration

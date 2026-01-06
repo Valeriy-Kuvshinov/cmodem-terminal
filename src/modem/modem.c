@@ -1,16 +1,5 @@
 #include "../../include/modem/modem.h"
 
-static const char *init_commands[][2] = {
-	{AT_RESET, AT_RESET_DESC},
-	{AT_ECHO_OFF, AT_ECHO_OFF_DESC},
-	{AT_NUMERIC_ERRORS_ON, AT_NUMERIC_ERRORS_ON_DESC},
-	{AT_CHARACTERS_SET_UCS2, AT_CHARACTERS_SET_UCS2_DESC},
-	{AT_STORAGE_ME, AT_STORAGE_ME_DESC},
-	{AT_CLIP_ON, AT_CLIP_ON_DESC},
-	{AT_EXTENDED_RING_ON, AT_EXTENDED_RING_ON_DESC},
-	{AT_NETWORK_REGISTRATION_BASIC, AT_NETWORK_REGISTRATION_BASIC_DESC},
-	{NULL, NULL}};
-
 /* Inner STATIC methods */
 /* ==================================================================== */
 static void log_failure_final(const char *desc, const char *response) {
@@ -143,9 +132,12 @@ bool init_modem(void) {
 	if (!run_init_command(AT_TEST, AT_TEST_DESC))
 		return false;
 
-	for (i = 0; init_commands[i][0] != NULL; i++) {
-		const char *cmd = init_commands[i][0];
-		const char *desc = init_commands[i][1];
+	for (i = 0; i < config.command_count; i++) {
+		const char *cmd = get_config_command(i);
+		const char *desc = get_config_description(i);
+
+		if (!cmd || !desc)
+			continue;
 
 		if (!run_init_command(cmd, desc))
 			return false;

@@ -1,5 +1,4 @@
 #include "../../include/modem/parser.h"
-#include "../../include/modem/call.h"
 
 /* Outer methods */
 /* ==================================================================== */
