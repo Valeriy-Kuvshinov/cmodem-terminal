@@ -8,29 +8,26 @@ baudrate = 230400
 # Format: command_N = AT_COMMAND
 # Format: description_N = Description text
 
-command_0 = AT
-description_0 = Test modem connection
+command_0 = ATZ
+description_0 = Reset modem to defaults
 
-command_1 = ATZ
-description_1 = Reset modem to defaults
+command_1 = ATE0
+description_1 = Disable command echo
 
-command_2 = ATE0
-description_2 = Disable command echo
+command_2 = AT+CMEE=1
+description_2 = Enable numeric error codes
 
-command_3 = AT+CMEE=1
-description_3 = Enable numeric error codes
+command_3 = AT+CSCS="UCS2"
+description_3 = Set character set to UCS2
 
-command_4 = AT+CSCS="UCS2"
-description_4 = Set character set to UCS2
+command_4 = AT+CPMS="ME","ME","ME"
+description_4 = Set storage to ME
 
-command_5 = AT+CPMS="ME","ME","ME"
-description_5 = Set storage to ME
+command_5 = AT+CLIP=1
+description_5 = Enable calling line identification
 
-command_6 = AT+CLIP=1
-description_6 = Enable calling line identification
+command_6 = AT+CRC=1
+description_6 = Enable extended format of incoming calls
 
-command_7 = AT+CRC=1
-description_7 = Enable extended format of incoming calls
-
-command_8 = AT+CREG=1
-description_8 = Enable basic network registration
+command_7 = AT+CREG=1
+description_7 = Enable basic network registration
