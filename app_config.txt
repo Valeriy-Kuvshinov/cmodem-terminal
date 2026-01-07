@@ -1,7 +1,5 @@
-# Modem Configuration File
 # This file contains AT commands and settings for the modem terminal
 # Format: key = value
-# Lines starting with # are comments
 
 # Serial port baudrate
 baudrate = 230400
