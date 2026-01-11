@@ -139,8 +139,7 @@ bool init_modem(void) {
 		if (!cmd || !desc)
 			continue;
 
-		if (!run_init_command(cmd, desc))
-			return false;
+		run_init_command(cmd, desc); // log any failures but continue
 
 		msleep(MODEM_RESPONSE_DELAY_MS);
 	}
