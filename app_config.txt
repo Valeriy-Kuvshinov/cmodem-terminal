@@ -8,7 +8,7 @@ baudrate = 230400
 # Format: command_N = AT_COMMAND
 # Format: description_N = Description text
 
-command_0 = ATZ
+command_0 = AT&F
 description_0 = Reset modem to defaults
 
 command_1 = ATE0
