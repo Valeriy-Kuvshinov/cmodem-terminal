@@ -5,5 +5,7 @@
 
 /* Global application state */
 ModemTerminal terminal;
+
 CallState call_state = {0};
+
 Config config;

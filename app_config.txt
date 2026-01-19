@@ -14,8 +14,8 @@ description_0 = Reset modem to defaults
 command_1 = ATE0
 description_1 = Disable command echo
 
-command_2 = AT+CMEE=1
-description_2 = Enable numeric error codes
+command_2 = AT+CMEE=2
+description_2 = Enable verbose errors
 
 command_3 = AT+CSCS="UCS2"
 description_3 = Set character set to UCS2
@@ -31,3 +31,6 @@ description_6 = Enable extended format of incoming calls
 
 command_7 = AT+CREG=1
 description_7 = Enable basic network registration
+
+command_8 = AT&D0
+description_8 = Ignore DTR status changes

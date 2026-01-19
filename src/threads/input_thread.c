@@ -76,6 +76,7 @@ static int process_line(char *line, int sms_mode) {
 		return EXIT_SIGNAL;
 	} else if (IS_SMS_COMMAND(line)) {
 		send_sms_command(line);
+
 		msleep(SMS_SEND_DELAY_MS);
 
 		return SMS_MODE_ON;
@@ -84,11 +85,13 @@ static int process_line(char *line, int sms_mode) {
 	if (sms_mode) {
 		send_sms_content(line);
 		complete_sms_sending();
+
 		msleep(COMMAND_DELAY_MS);
 
 		return SMS_MODE_OFF;
 	} else {
 		send_command(line);
+
 		msleep(COMMAND_DELAY_MS);
 
 		return SMS_MODE_OFF;

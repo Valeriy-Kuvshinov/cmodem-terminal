@@ -29,6 +29,7 @@ void exit_threads(pthread_t modem_thread, pthread_t stdin_thread) {
 void cleanup_terminal(void) {
 	if (terminal.fd >= 0) { // Only close if not pre-closed
 		tcflush(terminal.fd, TCIOFLUSH);
+
 		close(terminal.fd);
 	}
 	// Clear sensitive buffers immediately

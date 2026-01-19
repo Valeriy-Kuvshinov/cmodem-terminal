@@ -74,6 +74,7 @@ bool init_terminal(const char *device_port) {
 	}
 	// Set file descriptor to non-blocking mode for proper shutdown
 	flags = fcntl(terminal.fd, F_GETFL, 0);
+
 	fcntl(terminal.fd, F_SETFL, flags | O_NONBLOCK);
 
 	return true;

@@ -8,6 +8,7 @@ static void set_config_array_value(char *dest, size_t max_len,
 								   bool update_count) {
 	if (index >= 0 && index < MAX_INIT_COMMANDS) {
 		strncpy(dest, value, max_len - 1);
+
 		dest[max_len - 1] = NULL_TERMINATOR;
 
 		if (update_count && index >= config.command_count)
@@ -23,12 +24,14 @@ static bool parse_config_line(char *line) {
 		return false;
 
 	*equals_pos = NULL_TERMINATOR;
+
 	char *key = trim_whitespace(line);
 	char *value = trim_whitespace(equals_pos + 1);
 
 	// Remove quotes if present
 	if (*value == '"' && value[strlen(value) - 1] == '"') {
 		value[strlen(value) - 1] = NULL_TERMINATOR;
+
 		value++;
 	}
 
@@ -39,12 +42,14 @@ static bool parse_config_line(char *line) {
 	// Parse commands (format: command_N = AT_COMMAND)
 	else if (strncmp(key, CONFIG_COMMAND_LINE, CONFIG_COMMAND_LINE_LEN) == 0) {
 		int index = atoi(key + CONFIG_COMMAND_LINE_LEN);
+
 		set_config_array_value(config.init_commands[index].command,
 							   MAX_COMMAND_LENGTH, value, index, false);
 	}
 	// Parse descriptions (format: description_N = Description text)
 	else if (strncmp(key, CONFIG_DESC_LINE, CONFIG_DESC_LINE_LEN) == 0) {
 		int index = atoi(key + CONFIG_DESC_LINE_LEN);
+
 		set_config_array_value(config.init_commands[index].description,
 							   MAX_DESCRIPTION_LENGTH, value, index, true);
 	}

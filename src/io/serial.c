@@ -8,6 +8,7 @@ static void log_open_attempt(const char *device, int attempt, int max_retries) {
 	snprintf(status, sizeof(status),
 			 "Attempting to open port %s (attempt %d/%d)", device, attempt + 1,
 			 max_retries);
+
 	print_output(MSG_TYPE_STATUS, status);
 }
 
@@ -15,6 +16,7 @@ static void log_open_success(const char *device) {
 	char status[MAX_STATUS_MSG];
 
 	snprintf(status, sizeof(status), "Successfully opened port %s", device);
+
 	print_output(MSG_TYPE_STATUS, status);
 }
 
@@ -24,6 +26,7 @@ static void log_open_retry(const char *device, int retry_delay) {
 	snprintf(msg, sizeof(msg),
 			 "Port %s busy, retrying in %d seconds... (Error: %s)", device,
 			 retry_delay, strerror(errno));
+
 	print_output(MSG_TYPE_STATUS, msg);
 }
 
@@ -33,6 +36,7 @@ static void log_open_failure(const char *device, int max_retries) {
 	snprintf(error, sizeof(error),
 			 "Failed to open port %s after %d attempts: %s", device,
 			 max_retries, strerror(errno));
+
 	print_output(MSG_TYPE_ERROR, error);
 }
 
@@ -55,10 +59,8 @@ static int configure_serial_port(int fd) {
 	tty.c_cc[VTIME] = SERIAL_VTIME;
 
 	tty.c_iflag &= ~(IXON | IXOFF | IXANY);
-	tty.c_cflag |= (CLOCAL | CREAD);
-	tty.c_cflag &= ~(PARENB | PARODD);
-	tty.c_cflag &= ~CSTOPB;
-	tty.c_cflag &= ~CRTSCTS;
+	tty.c_cflag |= (CLOCAL | CREAD | HUPCL);
+	tty.c_cflag &= ~(PARENB | PARODD | CSTOPB | CRTSCTS);
 
 	if (tcsetattr(fd, TCSANOW, &tty) < 0) {
 		close(fd);

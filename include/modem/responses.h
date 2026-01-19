@@ -37,7 +37,8 @@
 	 strstr(line, "ERROR"))
 
 #define IS_SIM_ERROR_MESSAGE(line)                                             \
-	(strstr(line, "+SIMCARD: NOT AVAILABLE") || strstr(line, "+CREG: 0"))
+	(strstr(line, "+SIMCARD: NOT AVAILABLE") || strstr(line, "+CREG: 0") ||    \
+	 strstr(line, "SIM not inserted"))
 
 #define IS_URGENT_MESSAGE(line)                                                \
 	(IS_SMS_MESSAGE(line) || IS_CALL_MESSAGE(line) ||                          \

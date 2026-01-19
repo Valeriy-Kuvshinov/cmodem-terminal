@@ -16,6 +16,7 @@ static void log_failure_final(const char *desc, const char *response) {
 	snprintf(status, sizeof(status),
 			 "%s failed after %d attempts (Response: %s)", desc,
 			 MAX_INIT_RETRIES, msg);
+
 	print_output(MSG_TYPE_WARNING, status);
 }
 
@@ -70,6 +71,7 @@ static void log_success(const char *desc, const char *response) {
 	char status[MAX_STATUS_MSG];
 
 	snprintf(status, sizeof(status), "%s returned: %s", desc, response);
+
 	print_output(MSG_TYPE_INFO, status);
 }
 
@@ -82,6 +84,7 @@ static void log_failure(const char *desc, int attempt, const char *response) {
 	snprintf(status, sizeof(status),
 			 "%s failed, retrying in %d seconds... (Response: %s)", desc,
 			 INIT_RETRY_DELAY_SEC, msg);
+
 	print_output(MSG_TYPE_WARNING, status);
 }
 
@@ -134,6 +137,7 @@ bool init_modem(void) {
 
 	for (i = 0; i < config.command_count; i++) {
 		const char *cmd = get_config_command(i);
+
 		const char *desc = get_config_description(i);
 
 		if (!cmd || !desc)
