@@ -35,5 +35,5 @@ description_7 = Enable basic network registration
 command_8 = AT&D0
 description_8 = Ignore DTR status changes
 
-command_9 = AT+CNMI=2,2,0,0,0
-description_9 = Enable verbose SMS notifications
+command_9 = AT+CNMI=2,1,0,0,0
+description_9 = Enable SMS notifications
