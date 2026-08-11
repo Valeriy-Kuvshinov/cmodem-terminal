@@ -7,6 +7,4 @@
 /* App launch flags */
 #define QUIET_MODE_FLAG "--quiet"
 
-#define HAS_QUIET_MODE_FLAG(argc, argv) (strcmp((argv)[2], QUIET_MODE_FLAG) == 0)
-
 #endif

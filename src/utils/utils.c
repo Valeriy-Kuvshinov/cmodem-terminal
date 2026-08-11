@@ -17,17 +17,17 @@ void msleep(int ms) {
 ssize_t safe_write(int fd, const void *buf, size_t count) {
 	ssize_t ret = write(fd, buf, count);
 
-	if (ret < 0)
+	if (ret < 0) {
 		print_output("ERROR", strerror(errno));
-
+	}
 	return ret;
 }
 
 bool is_whitespace_only(const char *str) {
 	while (*str) {
-		if (!isspace((unsigned char)*str))
+		if (!isspace((unsigned char)*str)) {
 			return false;
-
+		}
 		str++;
 	}
 	return true;
@@ -36,21 +36,18 @@ bool is_whitespace_only(const char *str) {
 char *trim_whitespace(char *str) {
 	char *end;
 
-	// Trim leading space
-	while (isspace((unsigned char)*str))
+	while (isspace((unsigned char)*str)) { // Trim leading space
 		str++;
-
-	if (*str == 0) // All spaces?
+	}
+	if (*str == 0) {
 		return str;
+	}
+	end = str + strlen(str) - 1; // Trim trailing space
 
-	// Trim trailing space
-	end = str + strlen(str) - 1;
-
-	while (end > str && isspace((unsigned char)*end))
+	while (end > str && isspace((unsigned char)*end)) {
 		end--;
-
-	// Write new null terminator
-	*(end + 1) = 0;
+	}
+	*(end + 1) = 0; // Write new null terminator
 
 	return str;
 }

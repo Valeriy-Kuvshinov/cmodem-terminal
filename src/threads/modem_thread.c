@@ -10,11 +10,12 @@ static void handle_remaining_buffer(char *line_start) {
 	}
 	terminal.buffer_length = strlen(line_start);
 
-	if (terminal.buffer_length > 0 && line_start != terminal.output_buffer)
+	if (terminal.buffer_length > 0 && line_start != terminal.output_buffer) {
 		memmove(terminal.output_buffer, line_start, terminal.buffer_length + 1);
 
-	else if (terminal.buffer_length == 0)
+	} else if (terminal.buffer_length == 0) {
 		terminal.output_buffer[0] = NULL_TERMINATOR;
+	}
 }
 
 static void add_to_buffer(const char *data, int length) {
@@ -33,9 +34,9 @@ static void process_complete_lines(void) {
 	while ((crlf = strstr(line_start, CRLF)) != NULL) {
 		*crlf = NULL_TERMINATOR;
 
-		if (strlen(line_start) > 0)
+		if (strlen(line_start) > 0) {
 			categorize_line(line_start);
-
+		}
 		line_start = crlf + CRLF_LENGTH;
 	}
 	handle_remaining_buffer(line_start);
@@ -87,12 +88,12 @@ void *read_modem_thread(void *arg) {
 
 		bytes_read = read(terminal.fd, temp_buf, sizeof(temp_buf) - 1);
 
-		if (bytes_read > 0)
+		if (bytes_read > 0) {
 			process_received_data(temp_buf, bytes_read);
 
-		else if (bytes_read == 0 || IS_REAL_ERROR(bytes_read))
+		} else if (bytes_read == 0 || IS_REAL_ERROR(bytes_read)) {
 			break;
-
+		}
 		msleep(THREAD_SLEEP_MILLIS);
 	}
 	pthread_exit(NULL);

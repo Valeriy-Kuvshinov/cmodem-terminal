@@ -5,27 +5,27 @@
 static bool sanitize_input(char *line, size_t buffer_size) {
 	line[buffer_size - 1] = NULL_TERMINATOR;
 
-	if (!HAS_NEWLINE(line) && IS_BUFFER_FULL(line, buffer_size))
+	if (!HAS_NEWLINE(line) && IS_BUFFER_FULL(line, buffer_size)) {
 		return false;
-
+	}
 	size_t length = strlen(line);
 
-	if (length > 0 && line[length - 1] == NEWLINE)
+	if (length > 0 && line[length - 1] == NEWLINE) {
 		line[length - 1] = NULL_TERMINATOR;
-
+	}
 	return true;
 }
 
 static void clear_stdin_buffer(void) {
 	int c;
 
-	while (READ_UNTIL_NEWLINE_OR_EOF(c))
+	while (READ_UNTIL_NEWLINE_OR_EOF(c)) {
 		;
+	}
 }
 
 static void record_last_command(const char *cmd) {
 	strncpy(terminal.last_command, cmd, sizeof(terminal.last_command) - 1);
-
 	terminal.last_command[sizeof(terminal.last_command) - 1] = NULL_TERMINATOR;
 }
 
@@ -50,11 +50,12 @@ static void send_sms_content(const char *line) {
 static void send_raw_command(const char *cmd, const char *record_cmd) {
 	pthread_mutex_lock(&terminal.serial_mutex);
 
-	if (record_cmd)
+	if (record_cmd) {
 		record_last_command(record_cmd);
-	else
-		record_last_command(cmd);
 
+	} else {
+		record_last_command(cmd);
+	}
 	safe_write(terminal.fd, cmd, strlen(cmd));
 	safe_write(terminal.fd, CRLF, CRLF_LENGTH);
 
@@ -114,9 +115,9 @@ void *read_stdin_thread(void *arg) {
 			if (strlen(line) > 0) {
 				int new_mode = process_line(line, sms_mode);
 
-				if (new_mode == EXIT_SIGNAL)
+				if (new_mode == EXIT_SIGNAL) {
 					break;
-
+				}
 				sms_mode = new_mode;
 			}
 		}

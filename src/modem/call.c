@@ -10,8 +10,9 @@ static void handle_call_end(const char *line) {
 }
 
 static void handle_call_begin(const char *line) {
-	if (!call_state.call_in_progress)
+	if (!call_state.call_in_progress) {
 		call_state.call_in_progress = true;
+	}
 }
 
 static void extract_caller_id(const char *line, char *caller_id) {
@@ -19,29 +20,28 @@ static void extract_caller_id(const char *line, char *caller_id) {
 
 	comma = strchr(line, ',');
 
-	if (!comma)
+	if (!comma) {
 		return;
-
+	}
 	start = comma - 1;
 
-	// Find the opening quote
-	while (start > line && *start != '"')
+	while (start > line && *start != '"') { // Find the opening quote
 		start--;
-
-	if (*start != '"')
+	}
+	if (*start != '"') {
 		return;
-
+	}
 	start++;
 	end = strchr(start, '"');
 
-	if (!end)
+	if (!end) {
 		return;
-
+	}
 	size_t len = end - start;
 
-	if (len >= CALLER_ID_LENGTH)
+	if (len >= CALLER_ID_LENGTH) {
 		return;
-
+	}
 	strncpy(caller_id, start, len);
 
 	caller_id[len] = NULL_TERMINATOR;
@@ -55,16 +55,17 @@ void init_call_state(void) {
 }
 
 void handle_call_message(const char *line) {
-	if (IS_CALL_ID_MESSAGE(line))
+	if (IS_CALL_ID_MESSAGE(line)) {
 		extract_caller_id(line, call_state.last_caller_id);
-
+	}
 	print_output(MSG_TYPE_CALL, line);
 
-	if (IS_CALL_BEGIN_MESSAGE(line))
+	if (IS_CALL_BEGIN_MESSAGE(line)) {
 		handle_call_begin(line);
 
-	else if (IS_CALL_END_MESSAGE(line))
+	} else if (IS_CALL_END_MESSAGE(line)) {
 		handle_call_end(line);
+	}
 }
 
 void cleanup_call_state(void) { memset(&call_state, 0, sizeof(CallState)); }

@@ -8,11 +8,11 @@ static void log_failure_final(const char *desc, const char *response) {
 
 	if (strlen(response) > 0) {
 		strncpy(msg, response, sizeof(msg) - 1);
-
 		msg[sizeof(msg) - 1] = NEWLINE;
-	} else
-		strcpy(msg, "No response");
 
+	} else {
+		strcpy(msg, "No response");
+	}
 	snprintf(status, sizeof(status), "%s failed after %d attempts (Response: %s)", desc,
 			 MAX_INIT_RETRIES, msg);
 
@@ -43,24 +43,24 @@ static int send_init_command(const char *cmd, char *response, size_t response_si
 	if (ready > 0) {
 		bytes_read = read(terminal.fd, response, response_size - 1);
 
-		if (bytes_read > 0)
+		if (bytes_read > 0) {
 			response[bytes_read] = NULL_TERMINATOR;
-
-	} else if (ready == 0) // Timeout
+		}
+	} else if (ready == 0) { // Timeout
 		bytes_read = 0;
-
+	}
 	return bytes_read;
 }
 
 static void log_init_command(const char *desc, int attempt) {
 	char status[MAX_STATUS_MSG];
 
-	if (attempt > 0)
+	if (attempt > 0) {
 		snprintf(status, sizeof(status), "%s (retry %d/%d)", desc, attempt + 1, MAX_INIT_RETRIES);
 
-	else
+	} else {
 		snprintf(status, sizeof(status), "%s", desc);
-
+	}
 	print_output(MSG_TYPE_STATUS, status);
 }
 
@@ -85,21 +85,20 @@ static void log_failure(const char *desc, int attempt, const char *response) {
 }
 
 static bool process_response(const char *response, int bytes_read, int attempt, const char *desc) {
-	if (IS_OK_RESPONSE(response))
+	if (IS_OK_RESPONSE(response)) {
 		return true;
 
-	else if (bytes_read == 0 || IS_ERROR_MESSAGE(response)) {
+	} else if (bytes_read == 0 || IS_ERROR_MESSAGE(response)) {
 		if (attempt < MAX_INIT_RETRIES - 1) {
 			log_failure(desc, attempt, response);
-
 			sleep(INIT_RETRY_DELAY_SEC);
-		} else
-			log_failure_final(desc, response);
 
+		} else {
+			log_failure_final(desc, response);
+		}
 		return false;
 	} else {
 		log_success(desc, response);
-
 		return true;
 	}
 }
@@ -115,8 +114,9 @@ static bool run_init_command(const char *cmd, const char *desc) {
 
 		bytes_read = send_init_command(cmd, response, sizeof(response));
 
-		if (process_response(response, bytes_read, attempt, desc))
+		if (process_response(response, bytes_read, attempt, desc)) {
 			return true;
+		}
 	}
 	return false;
 }
@@ -127,17 +127,16 @@ bool init_modem(void) {
 	int i;
 
 	/* Check if modem is responsive to AT commands */
-	if (!run_init_command(AT_TEST, AT_TEST_DESC))
+	if (!run_init_command(AT_TEST, AT_TEST_DESC)) {
 		return false;
-
+	}
 	for (i = 0; i < config.command_count; i++) {
 		const char *cmd = get_config_command(i);
-
 		const char *desc = get_config_description(i);
 
-		if (!cmd || !desc)
+		if (!cmd || !desc) {
 			continue;
-
+		}
 		run_init_command(cmd, desc); // log any failures but continue
 
 		msleep(MODEM_RESPONSE_DELAY_MILLIS);

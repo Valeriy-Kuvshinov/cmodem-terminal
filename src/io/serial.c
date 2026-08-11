@@ -42,7 +42,6 @@ static int configure_serial_port(int fd) {
 
 	if (tcgetattr(fd, &tty) < 0) {
 		close(fd);
-
 		return -1;
 	}
 	cfsetospeed(&tty, config.baudrate);
@@ -61,7 +60,6 @@ static int configure_serial_port(int fd) {
 
 	if (tcsetattr(fd, TCSANOW, &tty) < 0) {
 		close(fd);
-
 		return -1;
 	}
 	return 0;
@@ -79,12 +77,10 @@ int open_serial_port(const char *device, int max_retries, int retry_delay) {
 
 		if (fd >= 0 && configure_serial_port(fd) == 0) {
 			log_open_success(device);
-
 			return fd;
 		}
 		if (attempt < max_retries - 1) {
 			log_open_retry(device, retry_delay);
-
 			sleep(retry_delay);
 		}
 	}

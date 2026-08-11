@@ -7,19 +7,21 @@
 
 /* Inner STATIC methods */
 /* ==================================================================== */
+static bool has_quiet_mode_flag(int argc, char *argv[]) {
+	return (argc == 3) && (strcmp(argv[2], QUIET_MODE_FLAG) == 0);
+}
+
 static bool is_args_valid(int argc, char *argv[], int *quiet_mode) {
-	if (argc < 2 || argc > 4) {
+	if (argc < 2 || argc > 3) {
 		fprintf(stderr, "Usage: %s <device_port> [%s]%c", argv[0], QUIET_MODE_FLAG, NEWLINE);
-
 		return false;
 	}
-	*quiet_mode = HAS_QUIET_MODE_FLAG(argc, argv);
-
-	if (argc == 3 && !HAS_QUIET_MODE_FLAG(argc, argv)) {
+	if (argc == 3 && !has_quiet_mode_flag(argc, argv)) {
 		fprintf(stderr, "Usage: %s <device_port> [%s]%c", argv[0], QUIET_MODE_FLAG, NEWLINE);
-
 		return false;
 	}
+	*quiet_mode = has_quiet_mode_flag(argc, argv);
+
 	return true;
 }
 
@@ -39,23 +41,20 @@ int main(int argc, char *argv[]) {
 	int quiet_mode;
 	pthread_t modem_thread, stdin_thread;
 
-	if (!is_args_valid(argc, argv, &quiet_mode))
+	if (!is_args_valid(argc, argv, &quiet_mode)) {
 		return 1;
-
+	}
 	device_port = argv[1];
 
 	if (!load_config()) {
 		printf("Failed to load %s%c", CONFIG_FILE_NAME, NEWLINE);
-
 		return 1;
 	}
-
-	if (!init_terminal(device_port))
+	if (!init_terminal(device_port)) {
 		return 1;
-
+	}
 	if (!init_modem()) {
 		close(terminal.fd);
-
 		return 1;
 	}
 	/* Register signal handlers for graceful shutdown */
