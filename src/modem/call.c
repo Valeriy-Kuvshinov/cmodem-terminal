@@ -55,15 +55,15 @@ void init_call_state(void) {
 }
 
 void handle_call_message(const char *line) {
-	if (IS_CALL_ID_MESSAGE(line)) {
+	if (is_call_id_message(line)) {
 		extract_caller_id(line, call_state.last_caller_id);
 	}
 	print_output(MSG_TYPE_CALL, line);
 
-	if (IS_CALL_BEGIN_MESSAGE(line)) {
+	if (is_call_begin_message(line)) {
 		handle_call_begin(line);
 
-	} else if (IS_CALL_END_MESSAGE(line)) {
+	} else if (is_call_end_message(line)) {
 		handle_call_end(line);
 	}
 }

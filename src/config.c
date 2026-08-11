@@ -10,8 +10,9 @@ static void set_config_array_value(char *dest, size_t max_len, const char *value
 
 		dest[max_len - 1] = NULL_TERMINATOR;
 
-		if (update_count && index >= config.command_count)
+		if (update_count && index >= config.command_count) {
 			config.command_count = index + 1;
+		}
 	}
 }
 
@@ -19,9 +20,9 @@ static void set_config_array_value(char *dest, size_t max_len, const char *value
 static bool parse_config_line(char *line) {
 	char *equals_pos = strchr(line, '=');
 
-	if (!equals_pos)
+	if (!equals_pos) {
 		return false;
-
+	}
 	*equals_pos = NULL_TERMINATOR;
 
 	char *key = trim_whitespace(line);
@@ -30,24 +31,21 @@ static bool parse_config_line(char *line) {
 	// Remove quotes if present
 	if (*value == '"' && value[strlen(value) - 1] == '"') {
 		value[strlen(value) - 1] = NULL_TERMINATOR;
-
 		value++;
 	}
-
-	// Parse baudrate
-	if (strcmp(key, CONFIG_BAUDRATE_LINE) == 0)
+	if (strcmp(key, CONFIG_BAUDRATE_LINE) == 0) { // Parse baudrate
 		config.baudrate = (uint32_t)atoi(value);
 
-	// Parse commands (format: command_N = AT_COMMAND)
-	else if (strncmp(key, CONFIG_COMMAND_LINE, CONFIG_COMMAND_LINE_LEN) == 0) {
-		int index = atoi(key + CONFIG_COMMAND_LINE_LEN);
+		// Parse commands (format: command_N = AT_COMMAND)
+	} else if (strncmp(key, CONFIG_COMMAND_LINE, sizeof(CONFIG_COMMAND_LINE) - 1) == 0) {
+		int index = atoi(key + sizeof(CONFIG_COMMAND_LINE) - 1);
 
 		set_config_array_value(config.init_commands[index].command, MAX_COMMAND_LENGTH, value,
 							   index, false);
-	}
-	// Parse descriptions (format: description_N = Description text)
-	else if (strncmp(key, CONFIG_DESC_LINE, CONFIG_DESC_LINE_LEN) == 0) {
-		int index = atoi(key + CONFIG_DESC_LINE_LEN);
+
+		// Parse descriptions (format: description_N = Description text)
+	} else if (strncmp(key, CONFIG_DESC_LINE, sizeof(CONFIG_DESC_LINE) - 1) == 0) {
+		int index = atoi(key + sizeof(CONFIG_DESC_LINE) - 1);
 
 		set_config_array_value(config.init_commands[index].description, MAX_DESCRIPTION_LENGTH,
 							   value, index, true);
@@ -61,9 +59,9 @@ bool load_config(void) {
 	const char *filename = CONFIG_FILE_NAME;
 	FILE *file = open_source_file(filename);
 
-	if (!file)
+	if (!file) {
 		return false;
-
+	}
 	config.command_count = 0;
 
 	char line[MAX_CONFIG_LINE];
@@ -75,16 +73,17 @@ bool load_config(void) {
 		// Remove newline
 		size_t len = strlen(line);
 
-		if (len > 0 && line[len - 1] == NEWLINE)
+		if (len > 0 && line[len - 1] == NEWLINE) {
 			line[len - 1] = NULL_TERMINATOR;
-
+		}
 		// Skip comments and empty lines
-		if (line[0] == '#' || line[0] == NULL_TERMINATOR || isspace(line[0]))
+		if (line[0] == '#' || line[0] == NULL_TERMINATOR || isspace(line[0])) {
 			continue;
-
-		if (!parse_config_line(line))
+		}
+		if (!parse_config_line(line)) {
 			fprintf(stderr, "Warning: Invalid config line %d in file: %s%c", line_num, line,
 					NEWLINE);
+		}
 	}
 	safe_fclose(&file);
 
@@ -92,15 +91,15 @@ bool load_config(void) {
 }
 
 const char *get_config_command(int index) {
-	if (index < 0 || index >= config.command_count)
+	if (index < 0 || index >= config.command_count) {
 		return NULL;
-
+	}
 	return config.init_commands[index].command;
 }
 
 const char *get_config_description(int index) {
-	if (index < 0 || index >= config.command_count)
+	if (index < 0 || index >= config.command_count) {
 		return NULL;
-
+	}
 	return config.init_commands[index].description;
 }

@@ -1,6 +1,7 @@
 # Compile flags and directory names
 CC = gcc
-FLAGS = -std=c11 -pedantic -Wall -g -O2
+# Expose POSIX and OS extensions
+FLAGS = -std=c11 -D_DEFAULT_SOURCE -D_POSIX_C_SOURCE=200809L -pedantic -Wall -g -O2
 SRC_DIR = src
 INC_DIR = include
 

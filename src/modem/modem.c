@@ -85,10 +85,10 @@ static void log_failure(const char *desc, int attempt, const char *response) {
 }
 
 static bool process_response(const char *response, int bytes_read, int attempt, const char *desc) {
-	if (IS_OK_RESPONSE(response)) {
+	if (is_ok_response(response)) {
 		return true;
 
-	} else if (bytes_read == 0 || IS_ERROR_MESSAGE(response)) {
+	} else if (bytes_read == 0 || is_error_message(response)) {
 		if (attempt < MAX_INIT_RETRIES - 1) {
 			log_failure(desc, attempt, response);
 			msleep(INIT_RETRY_DELAY_MILLIS);

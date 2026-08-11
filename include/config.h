@@ -17,9 +17,7 @@
 #define CONFIG_FILE_NAME "app_config.txt"
 #define CONFIG_BAUDRATE_LINE "baudrate"
 #define CONFIG_COMMAND_LINE "command_"
-#define CONFIG_COMMAND_LINE_LEN 8
 #define CONFIG_DESC_LINE "description_"
-#define CONFIG_DESC_LINE_LEN 12
 
 // Command entry structure
 typedef struct {
@@ -39,7 +37,9 @@ extern Config config;
 
 // Function prototypes
 bool load_config(void);
+
 const char *get_config_command(int index);
+
 const char *get_config_description(int index);
 
 #endif

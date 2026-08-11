@@ -2,10 +2,28 @@
 
 /* Inner STATIC methods */
 /* ==================================================================== */
+static bool has_newline(const char *str) { return strchr(str, NEWLINE) != NULL; }
+
+static bool is_buffer_full(const char *str, size_t size) { return strlen(str) == (size - 1); }
+
+static bool is_exit_command(const char *line) { return strcasecmp(line, EXIT_APP_COMMAND) == 0; }
+
+static bool is_sms_command(const char *line) {
+	return strncmp(line, AT_SEND_SMS "=", AT_SEND_SMS_LENGTH + 1) == 0;
+}
+
+static void clear_stdin_buffer(void) {
+	int c;
+
+	while ((c = getchar()) != NEWLINE && c != EOF) {
+		; /* discard characters */
+	}
+}
+
 static bool sanitize_input(char *line, size_t buffer_size) {
 	line[buffer_size - 1] = NULL_TERMINATOR;
 
-	if (!HAS_NEWLINE(line) && IS_BUFFER_FULL(line, buffer_size)) {
+	if (!has_newline(line) && is_buffer_full(line, buffer_size)) {
 		return false;
 	}
 	size_t length = strlen(line);
@@ -14,14 +32,6 @@ static bool sanitize_input(char *line, size_t buffer_size) {
 		line[length - 1] = NULL_TERMINATOR;
 	}
 	return true;
-}
-
-static void clear_stdin_buffer(void) {
-	int c;
-
-	while (READ_UNTIL_NEWLINE_OR_EOF(c)) {
-		;
-	}
 }
 
 static void record_last_command(const char *cmd) {
@@ -67,13 +77,13 @@ static void send_command(const char *line) { send_raw_command(line, NULL); }
 static void send_sms_command(const char *line) { send_raw_command(line, AT_SEND_SMS); }
 
 static int process_line(char *line, int sms_mode) {
-	if (IS_EXIT_COMMAND(line)) {
+	if (is_exit_command(line)) {
 		print_output(MSG_TYPE_COMPLETE, "Shutting down...");
 
 		set_terminal_running(false);
 
 		return EXIT_SIGNAL;
-	} else if (IS_SMS_COMMAND(line)) {
+	} else if (is_sms_command(line)) {
 		send_sms_command(line);
 
 		msleep(SMS_SEND_DELAY_MILLIS);
