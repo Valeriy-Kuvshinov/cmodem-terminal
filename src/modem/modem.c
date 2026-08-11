@@ -79,7 +79,7 @@ static void log_failure(const char *desc, int attempt, const char *response) {
 	msg = strlen(response) > 0 ? response : "No response";
 
 	snprintf(status, sizeof(status), "%s failed, retrying in %d seconds... (Response: %s)", desc,
-			 INIT_RETRY_DELAY_SEC, msg);
+			 INIT_RETRY_DELAY_MILLIS / 1000, msg);
 
 	print_output(MSG_TYPE_WARNING, status);
 }
@@ -91,7 +91,7 @@ static bool process_response(const char *response, int bytes_read, int attempt, 
 	} else if (bytes_read == 0 || IS_ERROR_MESSAGE(response)) {
 		if (attempt < MAX_INIT_RETRIES - 1) {
 			log_failure(desc, attempt, response);
-			sleep(INIT_RETRY_DELAY_SEC);
+			msleep(INIT_RETRY_DELAY_MILLIS);
 
 		} else {
 			log_failure_final(desc, response);

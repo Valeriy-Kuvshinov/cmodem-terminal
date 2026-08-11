@@ -6,12 +6,12 @@ void print_output(const char *type, const char *text) {
 }
 
 void msleep(int ms) {
-	struct timeval timeval;
+    struct timespec ts;
 
-	timeval.tv_sec = ms / MILLIS_PER_SECOND;
-	timeval.tv_usec = (ms % MILLIS_PER_SECOND) * MICROSECONDS_PER_MILLISECOND;
+    ts.tv_sec = ms / MILLIS_PER_SECOND;
+    ts.tv_nsec = (ms % MILLIS_PER_SECOND) * NANOSECONDS_PER_MILLISECOND;
 
-	select(0, NULL, NULL, NULL, &timeval);
+    nanosleep(&ts, NULL);
 }
 
 ssize_t safe_write(int fd, const void *buf, size_t count) {

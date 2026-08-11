@@ -67,7 +67,7 @@ static int configure_serial_port(int fd) {
 
 /* Outer methods */
 /* ==================================================================== */
-int open_serial_port(const char *device, int max_retries, int retry_delay) {
+int open_serial_port(const char *device, int max_retries) {
 	int attempt, fd;
 
 	for (attempt = 0; attempt < max_retries; attempt++) {
@@ -80,8 +80,8 @@ int open_serial_port(const char *device, int max_retries, int retry_delay) {
 			return fd;
 		}
 		if (attempt < max_retries - 1) {
-			log_open_retry(device, retry_delay);
-			sleep(retry_delay);
+			log_open_retry(device, PORT_RETRY_DELAY_MILLIS);
+			msleep(PORT_RETRY_DELAY_MILLIS);
 		}
 	}
 	log_open_failure(device, max_retries);

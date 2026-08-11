@@ -7,6 +7,7 @@
 #include <string.h>
 #include <strings.h>
 #include <sys/select.h>
+#include <time.h>
 #include <unistd.h>
 
 #include "../globals/chars.h"

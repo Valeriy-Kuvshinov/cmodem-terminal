@@ -39,6 +39,6 @@
 #define SERIAL_VMIN 0
 #define SERIAL_VTIME 10
 
-int open_serial_port(const char *device, int max_retries, int retry_delay);
+int open_serial_port(const char *device, int max_retries);
 
 #endif
