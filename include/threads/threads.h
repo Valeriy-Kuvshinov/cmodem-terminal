@@ -12,8 +12,6 @@
 #define SMS_MODE_OFF false
 #define EXIT_SIGNAL -1
 
-#define MAX_PORT_RETRIES 3
-
 #define EXIT_APP_COMMAND "exit"
 
 /* Macro for handling quit terminal */

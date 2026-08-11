@@ -11,6 +11,8 @@
 #include "../modem/responses.h"
 #include "../utils/utils.h"
 
+#define MAX_PORT_RETRIES 3
+
 /* File control flags */
 #define O_RDWR 02
 #define O_NOCTTY 0400
@@ -39,6 +41,6 @@
 #define SERIAL_VMIN 0
 #define SERIAL_VTIME 10
 
-int open_serial_port(const char *device, int max_retries);
+int open_serial_port(const char *device);
 
 #endif

@@ -76,7 +76,7 @@ static int process_line(char *line, int sms_mode) {
 	} else if (IS_SMS_COMMAND(line)) {
 		send_sms_command(line);
 
-		msleep(SMS_SEND_DELAY_MILLISS);
+		msleep(SMS_SEND_DELAY_MILLIS);
 
 		return SMS_MODE_ON;
 	}

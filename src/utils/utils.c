@@ -5,13 +5,15 @@ void print_output(const char *type, const char *text) {
 	fflush(stdout);
 }
 
-void msleep(int ms) {
-    struct timespec ts;
+void msleep(int millis) {
+	struct timespec req, rem;
 
-    ts.tv_sec = ms / MILLIS_PER_SECOND;
-    ts.tv_nsec = (ms % MILLIS_PER_SECOND) * NANOSECONDS_PER_MILLISECOND;
+	req.tv_sec = millis / MILLIS_PER_SECOND;
+	req.tv_nsec = (millis % MILLIS_PER_SECOND) * NANOSECONDS_PER_MILLIS;
 
-    nanosleep(&ts, NULL);
+	while (nanosleep(&req, &rem) == -1 && errno == EINTR) {
+		req = rem;
+	}
 }
 
 ssize_t safe_write(int fd, const void *buf, size_t count) {

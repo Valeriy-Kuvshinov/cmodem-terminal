@@ -67,11 +67,11 @@ static int configure_serial_port(int fd) {
 
 /* Outer methods */
 /* ==================================================================== */
-int open_serial_port(const char *device, int max_retries) {
+int open_serial_port(const char *device) {
 	int attempt, fd;
 
-	for (attempt = 0; attempt < max_retries; attempt++) {
-		log_open_attempt(device, attempt, max_retries);
+	for (attempt = 0; attempt < MAX_PORT_RETRIES; attempt++) {
+		log_open_attempt(device, attempt, MAX_PORT_RETRIES);
 
 		fd = open(device, O_RDWR | O_NOCTTY | O_SYNC);
 
@@ -79,12 +79,12 @@ int open_serial_port(const char *device, int max_retries) {
 			log_open_success(device);
 			return fd;
 		}
-		if (attempt < max_retries - 1) {
+		if (attempt < MAX_PORT_RETRIES - 1) {
 			log_open_retry(device, PORT_RETRY_DELAY_MILLIS);
 			msleep(PORT_RETRY_DELAY_MILLIS);
 		}
 	}
-	log_open_failure(device, max_retries);
+	log_open_failure(device, MAX_PORT_RETRIES);
 
 	return -1;
 }
