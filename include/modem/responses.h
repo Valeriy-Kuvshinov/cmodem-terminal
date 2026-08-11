@@ -23,26 +23,24 @@
 
 #define IS_CALL_BEGIN_MESSAGE(line) (strstr(line, "VOICE CALL: BEGIN"))
 
-#define IS_CALL_END_MESSAGE(line)                                              \
-	(strstr(line, "NO CARRIER") || strstr(line, "BUSY") ||                     \
-	 strstr(line, "NO ANSWER") || strstr(line, "VOICE CALL: END"))
+#define IS_CALL_END_MESSAGE(line)                                                                  \
+	(strstr(line, "NO CARRIER") || strstr(line, "BUSY") || strstr(line, "NO ANSWER") ||            \
+	 strstr(line, "VOICE CALL: END"))
 
-#define IS_CALL_MESSAGE(line)                                                  \
-	(IS_RING_MESSAGE(line) || IS_CALL_ID_MESSAGE(line) ||                      \
-	 IS_CALL_END_MESSAGE(line) || IS_CALL_BEGIN_MESSAGE(line) ||               \
-	 IS_MISSED_CALL_MESSAGE(line))
+#define IS_CALL_MESSAGE(line)                                                                      \
+	(IS_RING_MESSAGE(line) || IS_CALL_ID_MESSAGE(line) || IS_CALL_END_MESSAGE(line) ||             \
+	 IS_CALL_BEGIN_MESSAGE(line) || IS_MISSED_CALL_MESSAGE(line))
 
-#define IS_ERROR_MESSAGE(line)                                                 \
-	(strstr(line, "+CME ERROR") || strstr(line, "+CMS ERROR") ||               \
-	 strstr(line, "ERROR"))
+#define IS_ERROR_MESSAGE(line)                                                                     \
+	(strstr(line, "+CME ERROR") || strstr(line, "+CMS ERROR") || strstr(line, "ERROR"))
 
-#define IS_SIM_ERROR_MESSAGE(line)                                             \
-	(strstr(line, "+SIMCARD: NOT AVAILABLE") || strstr(line, "+CREG: 0") ||    \
+#define IS_SIM_ERROR_MESSAGE(line)                                                                 \
+	(strstr(line, "+SIMCARD: NOT AVAILABLE") || strstr(line, "+CREG: 0") ||                        \
 	 strstr(line, "SIM not inserted"))
 
-#define IS_URGENT_MESSAGE(line)                                                \
-	(IS_SMS_MESSAGE(line) || IS_CALL_MESSAGE(line) ||                          \
-	 IS_ERROR_MESSAGE(line) || IS_SIM_ERROR_MESSAGE(line))
+#define IS_URGENT_MESSAGE(line)                                                                    \
+	(IS_SMS_MESSAGE(line) || IS_CALL_MESSAGE(line) || IS_ERROR_MESSAGE(line) ||                    \
+	 IS_SIM_ERROR_MESSAGE(line))
 
 #define IS_OK_RESPONSE(line) (strstr(line, "OK"))
 

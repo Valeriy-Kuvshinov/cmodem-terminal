@@ -20,8 +20,7 @@
 #define IS_EXIT_COMMAND(line) (strcasecmp(line, EXIT_APP_COMMAND) == 0)
 
 /* Macros for SMS handling */
-#define IS_SMS_COMMAND(line)                                                   \
-	(strncmp(line, AT_SEND_SMS "=", AT_SEND_SMS_LENGTH + 1) == 0)
+#define IS_SMS_COMMAND(line) (strncmp(line, AT_SEND_SMS "=", AT_SEND_SMS_LENGTH + 1) == 0)
 
 /* Macros for input validation */
 #define HAS_NEWLINE(str) (strchr((str), NEWLINE) != NULL)

@@ -8,9 +8,8 @@ void print_output(const char *type, const char *text) {
 void msleep(int ms) {
 	struct timeval timeval;
 
-	timeval.tv_sec = ms / MILLISECONDS_PER_SECOND;
-	timeval.tv_usec =
-		(ms % MILLISECONDS_PER_SECOND) * MICROSECONDS_PER_MILLISECOND;
+	timeval.tv_sec = ms / MILLIS_PER_SECOND;
+	timeval.tv_usec = (ms % MILLIS_PER_SECOND) * MICROSECONDS_PER_MILLISECOND;
 
 	select(0, NULL, NULL, NULL, &timeval);
 }

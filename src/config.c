@@ -3,8 +3,7 @@
 /* Inner STATIC methods */
 /* ==================================================================== */
 // Helper function to safely copy config values to arrays
-static void set_config_array_value(char *dest, size_t max_len,
-								   const char *value, int index,
+static void set_config_array_value(char *dest, size_t max_len, const char *value, int index,
 								   bool update_count) {
 	if (index >= 0 && index < MAX_INIT_COMMANDS) {
 		strncpy(dest, value, max_len - 1);
@@ -43,15 +42,15 @@ static bool parse_config_line(char *line) {
 	else if (strncmp(key, CONFIG_COMMAND_LINE, CONFIG_COMMAND_LINE_LEN) == 0) {
 		int index = atoi(key + CONFIG_COMMAND_LINE_LEN);
 
-		set_config_array_value(config.init_commands[index].command,
-							   MAX_COMMAND_LENGTH, value, index, false);
+		set_config_array_value(config.init_commands[index].command, MAX_COMMAND_LENGTH, value,
+							   index, false);
 	}
 	// Parse descriptions (format: description_N = Description text)
 	else if (strncmp(key, CONFIG_DESC_LINE, CONFIG_DESC_LINE_LEN) == 0) {
 		int index = atoi(key + CONFIG_DESC_LINE_LEN);
 
-		set_config_array_value(config.init_commands[index].description,
-							   MAX_DESCRIPTION_LENGTH, value, index, true);
+		set_config_array_value(config.init_commands[index].description, MAX_DESCRIPTION_LENGTH,
+							   value, index, true);
 	}
 	return true;
 }
@@ -84,8 +83,8 @@ bool load_config(void) {
 			continue;
 
 		if (!parse_config_line(line))
-			fprintf(stderr, "Warning: Invalid config line %d in file: %s%c",
-					line_num, line, NEWLINE);
+			fprintf(stderr, "Warning: Invalid config line %d in file: %s%c", line_num, line,
+					NEWLINE);
 	}
 	safe_fclose(&file);
 

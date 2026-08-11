@@ -5,9 +5,8 @@
 static void log_open_attempt(const char *device, int attempt, int max_retries) {
 	char status[MAX_STATUS_MSG];
 
-	snprintf(status, sizeof(status),
-			 "Attempting to open port %s (attempt %d/%d)", device, attempt + 1,
-			 max_retries);
+	snprintf(status, sizeof(status), "Attempting to open port %s (attempt %d/%d)", device,
+			 attempt + 1, max_retries);
 
 	print_output(MSG_TYPE_STATUS, status);
 }
@@ -23,8 +22,7 @@ static void log_open_success(const char *device) {
 static void log_open_retry(const char *device, int retry_delay) {
 	char msg[MAX_STATUS_MSG];
 
-	snprintf(msg, sizeof(msg),
-			 "Port %s busy, retrying in %d seconds... (Error: %s)", device,
+	snprintf(msg, sizeof(msg), "Port %s busy, retrying in %d seconds... (Error: %s)", device,
 			 retry_delay, strerror(errno));
 
 	print_output(MSG_TYPE_STATUS, msg);
@@ -33,8 +31,7 @@ static void log_open_retry(const char *device, int retry_delay) {
 static void log_open_failure(const char *device, int max_retries) {
 	char error[MAX_STATUS_MSG];
 
-	snprintf(error, sizeof(error),
-			 "Failed to open port %s after %d attempts: %s", device,
+	snprintf(error, sizeof(error), "Failed to open port %s after %d attempts: %s", device,
 			 max_retries, strerror(errno));
 
 	print_output(MSG_TYPE_ERROR, error);

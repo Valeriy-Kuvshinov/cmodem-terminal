@@ -13,15 +13,13 @@ static void log_failure_final(const char *desc, const char *response) {
 	} else
 		strcpy(msg, "No response");
 
-	snprintf(status, sizeof(status),
-			 "%s failed after %d attempts (Response: %s)", desc,
+	snprintf(status, sizeof(status), "%s failed after %d attempts (Response: %s)", desc,
 			 MAX_INIT_RETRIES, msg);
 
 	print_output(MSG_TYPE_WARNING, status);
 }
 
-static int send_init_command(const char *cmd, char *response,
-							 size_t response_size) {
+static int send_init_command(const char *cmd, char *response, size_t response_size) {
 	int bytes_read = 0;
 	int ready;
 	struct timeval timeout;
@@ -58,8 +56,7 @@ static void log_init_command(const char *desc, int attempt) {
 	char status[MAX_STATUS_MSG];
 
 	if (attempt > 0)
-		snprintf(status, sizeof(status), "%s (retry %d/%d)", desc, attempt + 1,
-				 MAX_INIT_RETRIES);
+		snprintf(status, sizeof(status), "%s (retry %d/%d)", desc, attempt + 1, MAX_INIT_RETRIES);
 
 	else
 		snprintf(status, sizeof(status), "%s", desc);
@@ -81,15 +78,13 @@ static void log_failure(const char *desc, int attempt, const char *response) {
 
 	msg = strlen(response) > 0 ? response : "No response";
 
-	snprintf(status, sizeof(status),
-			 "%s failed, retrying in %d seconds... (Response: %s)", desc,
+	snprintf(status, sizeof(status), "%s failed, retrying in %d seconds... (Response: %s)", desc,
 			 INIT_RETRY_DELAY_SEC, msg);
 
 	print_output(MSG_TYPE_WARNING, status);
 }
 
-static bool process_response(const char *response, int bytes_read, int attempt,
-							 const char *desc) {
+static bool process_response(const char *response, int bytes_read, int attempt, const char *desc) {
 	if (IS_OK_RESPONSE(response))
 		return true;
 
@@ -145,7 +140,7 @@ bool init_modem(void) {
 
 		run_init_command(cmd, desc); // log any failures but continue
 
-		msleep(MODEM_RESPONSE_DELAY_MS);
+		msleep(MODEM_RESPONSE_DELAY_MILLIS);
 	}
 	print_output(MSG_TYPE_STATUS, "INIT COMPLETE");
 

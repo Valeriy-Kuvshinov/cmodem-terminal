@@ -63,8 +63,7 @@ bool init_terminal(const char *device_port) {
 	pthread_mutex_init(&terminal.serial_mutex, NULL);
 	pthread_mutex_init(&terminal.running_mutex, NULL);
 
-	terminal.fd =
-		open_serial_port(device_port, MAX_PORT_RETRIES, PORT_RETRY_DELAY_SEC);
+	terminal.fd = open_serial_port(device_port, MAX_PORT_RETRIES, PORT_RETRY_DELAY_SEC);
 
 	if (terminal.fd < 0) {
 		pthread_mutex_destroy(&terminal.serial_mutex);
@@ -94,7 +93,7 @@ void *read_modem_thread(void *arg) {
 		else if (bytes_read == 0 || IS_REAL_ERROR(bytes_read))
 			break;
 
-		msleep(THREAD_SLEEP_MS);
+		msleep(THREAD_SLEEP_MILLIS);
 	}
 	pthread_exit(NULL);
 }

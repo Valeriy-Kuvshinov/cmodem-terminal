@@ -63,9 +63,7 @@ static void send_raw_command(const char *cmd, const char *record_cmd) {
 
 static void send_command(const char *line) { send_raw_command(line, NULL); }
 
-static void send_sms_command(const char *line) {
-	send_raw_command(line, AT_SEND_SMS);
-}
+static void send_sms_command(const char *line) { send_raw_command(line, AT_SEND_SMS); }
 
 static int process_line(char *line, int sms_mode) {
 	if (IS_EXIT_COMMAND(line)) {
@@ -77,7 +75,7 @@ static int process_line(char *line, int sms_mode) {
 	} else if (IS_SMS_COMMAND(line)) {
 		send_sms_command(line);
 
-		msleep(SMS_SEND_DELAY_MS);
+		msleep(SMS_SEND_DELAY_MILLISS);
 
 		return SMS_MODE_ON;
 	}
@@ -86,13 +84,13 @@ static int process_line(char *line, int sms_mode) {
 		send_sms_content(line);
 		complete_sms_sending();
 
-		msleep(COMMAND_DELAY_MS);
+		msleep(COMMAND_DELAY_MILLIS);
 
 		return SMS_MODE_OFF;
 	} else {
 		send_command(line);
 
-		msleep(COMMAND_DELAY_MS);
+		msleep(COMMAND_DELAY_MILLIS);
 
 		return SMS_MODE_OFF;
 	}

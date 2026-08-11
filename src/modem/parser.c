@@ -21,8 +21,7 @@ void categorize_line(const char *line) {
 	/* Command is valid */
 	else if (IS_OK_RESPONSE(line)) {
 		// Suppress OK responses after call commands to reduce spam
-		if (!call_state.call_in_progress ||
-			!IS_ERROR_OK_COMMAND(terminal.last_command))
+		if (!call_state.call_in_progress || !IS_ERROR_OK_COMMAND(terminal.last_command))
 			print_output(MSG_TYPE_COMPLETE, "OK");
 	}
 
