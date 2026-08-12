@@ -2,6 +2,7 @@
 #define MODEM_H
 
 #include <pthread.h>
+#include <stdatomic.h>
 #include <stdbool.h>
 
 #include "../config.h"
@@ -17,12 +18,11 @@
 
 typedef struct {
 	int fd;
-	bool is_running;
+	atomic_bool is_running;
 	char output_buffer[MAX_BUFFER];
 	size_t buffer_length;
 	char last_command[MAX_COMMAND];
 	pthread_mutex_t serial_mutex;
-	pthread_mutex_t running_mutex;
 } ModemTerminal;
 
 extern ModemTerminal terminal;

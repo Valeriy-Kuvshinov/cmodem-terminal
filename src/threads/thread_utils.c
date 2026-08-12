@@ -2,18 +2,7 @@
 
 /* Outer methods */
 /* ==================================================================== */
-void set_terminal_running(bool value) {
-	pthread_mutex_lock(&terminal.running_mutex);
-
-	terminal.is_running = value;
-
-	if (!value && terminal.fd >= 0) {
-		close(terminal.fd);
-
-		terminal.fd = -1;
-	}
-	pthread_mutex_unlock(&terminal.running_mutex);
-}
+void set_terminal_running(bool value) { atomic_store(&terminal.is_running, value); }
 
 void start_threads(pthread_t *modem_thread, pthread_t *stdin_thread) {
 	pthread_create(modem_thread, NULL, read_modem_thread, NULL);
@@ -27,14 +16,16 @@ void exit_threads(pthread_t modem_thread, pthread_t stdin_thread) {
 }
 
 void cleanup_terminal(void) {
-	if (terminal.fd >= 0) { // Only close if not pre-closed
+	if (terminal.fd >= 0) {
 		tcflush(terminal.fd, TCIOFLUSH);
+
 		close(terminal.fd);
+
+		terminal.fd = -1;
 	}
 	// Clear sensitive buffers immediately
 	memset(terminal.output_buffer, 0, sizeof(terminal.output_buffer));
 	memset(terminal.last_command, 0, sizeof(terminal.last_command));
 
 	pthread_mutex_destroy(&terminal.serial_mutex);
-	pthread_mutex_destroy(&terminal.running_mutex);
 }

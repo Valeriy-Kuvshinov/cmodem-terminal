@@ -2,6 +2,10 @@
 
 /* Inner STATIC methods */
 /* ==================================================================== */
+static bool is_real_error(int bytes_read) {
+	return (bytes_read < 0) && (errno != EAGAIN) && (errno != EWOULDBLOCK);
+}
+
 static void handle_remaining_buffer(char *line_start) {
 	if (is_urgent_message(line_start)) {
 		print_output(MSG_TYPE_URGENT, line_start);
@@ -58,22 +62,18 @@ bool init_terminal(const char *device_port) {
 
 	memset(&terminal, 0, sizeof(ModemTerminal));
 
-	terminal.is_running = true;
+	atomic_store(&terminal.is_running, true);
 
 	pthread_mutex_init(&terminal.serial_mutex, NULL);
-	pthread_mutex_init(&terminal.running_mutex, NULL);
 
 	terminal.fd = open_serial_port(device_port);
 
 	if (terminal.fd < 0) {
 		pthread_mutex_destroy(&terminal.serial_mutex);
-		pthread_mutex_destroy(&terminal.running_mutex);
-
 		return false;
 	}
 	// Set file descriptor to non-blocking mode for proper shutdown
 	flags = fcntl(terminal.fd, F_GETFL, 0);
-
 	fcntl(terminal.fd, F_SETFL, flags | O_NONBLOCK);
 
 	return true;
@@ -82,7 +82,7 @@ bool init_terminal(const char *device_port) {
 void *read_modem_thread(void *arg) {
 	char temp_buf[MAX_BUFFER];
 
-	while (terminal.is_running) {
+	while (atomic_load(&terminal.is_running)) {
 		int bytes_read;
 
 		bytes_read = read(terminal.fd, temp_buf, sizeof(temp_buf) - 1);
@@ -90,7 +90,7 @@ void *read_modem_thread(void *arg) {
 		if (bytes_read > 0) {
 			process_received_data(temp_buf, bytes_read);
 
-		} else if (bytes_read == 0 || IS_REAL_ERROR(bytes_read)) {
+		} else if (bytes_read == 0 || is_real_error(bytes_read)) {
 			break;
 		}
 		msleep(THREAD_SLEEP_MILLIS);

@@ -1,5 +1,3 @@
-#include <signal.h>
-
 #include "../include/config.h"
 #include "../include/modem/call.h"
 #include "../include/threads/threads.h"

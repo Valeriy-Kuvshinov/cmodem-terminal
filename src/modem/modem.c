@@ -79,7 +79,7 @@ static void log_failure(const char *desc, int attempt, const char *response) {
 	msg = strlen(response) > 0 ? response : "No response";
 
 	snprintf(status, sizeof(status), "%s failed, retrying in %d seconds... (Response: %s)", desc,
-			 INIT_RETRY_DELAY_MILLIS / 1000, msg);
+			 INIT_RETRY_DELAY_MILLIS / MILLIS_PER_SECOND, msg);
 
 	print_output(MSG_TYPE_WARNING, status);
 }

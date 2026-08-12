@@ -9,6 +9,7 @@
 #include <sys/select.h>
 #include <time.h>
 #include <unistd.h>
+#include <signal.h>
 
 #include "../globals/chars.h"
 #include "../globals/globals.h"
@@ -24,8 +25,5 @@ void msleep(int millis);
 bool is_whitespace_only(const char *str);
 
 char *trim_whitespace(char *str);
-
-/* Macros */
-#define IS_REAL_ERROR(bytes_read) ((bytes_read) < 0 && errno != EAGAIN && errno != EWOULDBLOCK)
 
 #endif

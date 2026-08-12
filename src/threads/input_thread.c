@@ -83,6 +83,7 @@ static int process_line(char *line, int sms_mode) {
 		set_terminal_running(false);
 
 		return EXIT_SIGNAL;
+
 	} else if (is_sms_command(line)) {
 		send_sms_command(line);
 
@@ -90,7 +91,6 @@ static int process_line(char *line, int sms_mode) {
 
 		return SMS_MODE_ON;
 	}
-
 	if (sms_mode) {
 		send_sms_content(line);
 		complete_sms_sending();
@@ -98,6 +98,7 @@ static int process_line(char *line, int sms_mode) {
 		msleep(COMMAND_DELAY_MILLIS);
 
 		return SMS_MODE_OFF;
+
 	} else {
 		send_command(line);
 
@@ -112,25 +113,38 @@ static int process_line(char *line, int sms_mode) {
 void *read_stdin_thread(void *arg) {
 	char line[MAX_COMMAND];
 	int sms_mode = false;
+	struct pollfd pfd;
 
-	while (terminal.is_running) {
-		if (fgets(line, sizeof(line), stdin) != NULL) {
-			if (!sanitize_input(line, sizeof(line))) {
-				clear_stdin_buffer();
+	pfd.fd = STDIN_FILENO;
+	pfd.events = POLLIN;
 
-				print_output(MSG_TYPE_WARNING, "Input too long - ignored");
-
-				continue;
-			}
-			if (strlen(line) > 0) {
-				int new_mode = process_line(line, sms_mode);
-
-				if (new_mode == EXIT_SIGNAL) {
-					break;
-				}
-				sms_mode = new_mode;
-			}
+	while (atomic_load(&terminal.is_running)) {
+		/* Avoid blocking forever */
+		if (poll(&pfd, 1, STDIN_POLL_TIMEOUT_MILLIS) <= 0) {
+			continue;
 		}
+		if (!(pfd.revents & POLLIN)) {
+			continue;
+		}
+		if (fgets(line, sizeof(line), stdin) == NULL) {
+			continue;
+		}
+		if (!sanitize_input(line, sizeof(line))) {
+			clear_stdin_buffer();
+
+			print_output(MSG_TYPE_WARNING, "Input too long - ignored");
+
+			continue;
+		}
+		if (strlen(line) == 0) {
+			continue;
+		}
+		int new_mode = process_line(line, sms_mode);
+
+		if (new_mode == EXIT_SIGNAL) {
+			break;
+		}
+		sms_mode = new_mode;
 	}
 	pthread_exit(NULL);
 }
