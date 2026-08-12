@@ -20,7 +20,10 @@ ssize_t safe_write(int fd, const void *buf, size_t count) {
 	ssize_t ret = write(fd, buf, count);
 
 	if (ret < 0) {
-		print_output("ERROR", strerror(errno));
+		/* Ignore non-blocking flow control errors */
+		if (errno != EAGAIN && errno != EWOULDBLOCK) {
+			print_output("ERROR", strerror(errno));
+		}
 	}
 	return ret;
 }

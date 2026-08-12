@@ -31,9 +31,4 @@ bool is_sim_error_message(const char *line) {
 		   strstr(line, "SIM not inserted");
 }
 
-bool is_urgent_message(const char *line) {
-	return is_sms_message(line) || is_call_message(line) || is_error_message(line) ||
-		   is_sim_error_message(line);
-}
-
 bool is_ok_response(const char *line) { return strstr(line, "OK") != NULL; }

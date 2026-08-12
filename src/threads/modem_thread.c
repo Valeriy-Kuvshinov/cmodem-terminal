@@ -7,10 +7,6 @@ static bool is_real_error(int bytes_read) {
 }
 
 static void handle_remaining_buffer(char *line_start) {
-	if (is_urgent_message(line_start)) {
-		print_output(MSG_TYPE_URGENT, line_start);
-		line_start += strlen(line_start);
-	}
 	terminal.buffer_length = strlen(line_start);
 
 	if (terminal.buffer_length > 0 && line_start != terminal.output_buffer) {

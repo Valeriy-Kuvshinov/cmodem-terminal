@@ -11,7 +11,6 @@
 #define MSG_TYPE_INFO "[INFO]"
 #define MSG_TYPE_RESPONSE "[RESPONSE]"
 #define MSG_TYPE_WARNING "[WARNING]"
-#define MSG_TYPE_URGENT "[URGENT]"
 #define MSG_TYPE_SMS "[SMS]"
 #define MSG_TYPE_CALL "[CALL]"
 
@@ -26,7 +25,6 @@ bool is_call_end_message(const char *line);
 bool is_call_message(const char *line);
 bool is_error_message(const char *line);
 bool is_sim_error_message(const char *line);
-bool is_urgent_message(const char *line);
 bool is_ok_response(const char *line);
 
 #endif

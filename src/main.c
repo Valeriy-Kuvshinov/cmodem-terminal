@@ -51,14 +51,13 @@ int main(int argc, char *argv[]) {
 	if (!init_terminal(device_port)) {
 		return 1;
 	}
-	if (!init_modem()) {
-		close(terminal.fd);
-		return 1;
-	}
-	/* Register signal handlers for graceful shutdown */
 	signal(SIGINT, signal_handler);
 	signal(SIGTERM, signal_handler);
 
+	if (!init_modem()) {
+		cleanup_terminal();
+		return 1;
+	}
 	init_call_state();
 
 	if (!quiet_mode) {

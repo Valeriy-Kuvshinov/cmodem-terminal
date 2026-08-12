@@ -23,7 +23,7 @@ static void log_open_retry(const char *device, int retry_delay) {
 	char msg[MAX_STATUS_MSG];
 
 	snprintf(msg, sizeof(msg), "Port %s busy, retrying in %d seconds... (Error: %s)", device,
-			 retry_delay, strerror(errno));
+			 retry_delay / MILLIS_PER_SECOND, strerror(errno));
 
 	print_output(MSG_TYPE_STATUS, msg);
 }

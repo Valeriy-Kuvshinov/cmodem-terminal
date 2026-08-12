@@ -127,6 +127,14 @@ void *read_stdin_thread(void *arg) {
 			continue;
 		}
 		if (fgets(line, sizeof(line), stdin) == NULL) {
+			/* EOF reached */
+			if (feof(stdin) || ferror(stdin)) {
+				print_output(MSG_TYPE_WARNING, "Standard input closed. Exiting terminal.");
+
+				set_terminal_running(false);
+
+				break;
+			}
 			continue;
 		}
 		if (!sanitize_input(line, sizeof(line))) {
