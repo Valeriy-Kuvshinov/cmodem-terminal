@@ -14,6 +14,10 @@
 #include "../globals/time.h"
 #include "../modem/responses.h"
 
+/* ANSI escape codes for terminal manipulation */
+#define ANSI_CURSOR_UP "\033[1A"
+#define ANSI_ERASE_LINE "\033[2K"
+
 /* General Function prototypes */
 ssize_t safe_write(int fd, const void *buf, size_t count);
 
