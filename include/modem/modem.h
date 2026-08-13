@@ -25,6 +25,7 @@ typedef struct {
 	pthread_mutex_t serial_mutex;
 } ModemTerminal;
 
+/* Global Modem Terminal instance */
 extern ModemTerminal terminal;
 
 /* Function prototypes */

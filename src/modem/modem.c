@@ -4,7 +4,7 @@
 /* ==================================================================== */
 static void log_failure_final(const char *desc, const char *response) {
 	char status[MAX_STATUS_MSG];
-	char msg[MAX_STATUS_MSG]; // Temporary buffer for safe truncation
+	char msg[MAX_STATUS_MSG]; /* Temporary buffer for safe truncation */
 
 	if (strlen(response) > 0) {
 		strncpy(msg, response, sizeof(msg) - 1);
@@ -32,10 +32,10 @@ static int send_init_command(const char *cmd, char *response, size_t response_si
 
 	pthread_mutex_unlock(&terminal.serial_mutex);
 
-	// Wait for response with timeout
+	/* Wait for response with timeout */
 	FD_ZERO(&readfds);
 	FD_SET(terminal.fd, &readfds);
-	timeout.tv_sec = 5; // 5 second timeout
+	timeout.tv_sec = 5;
 	timeout.tv_usec = 0;
 
 	ready = select(terminal.fd + 1, &readfds, NULL, NULL, &timeout);
@@ -46,7 +46,7 @@ static int send_init_command(const char *cmd, char *response, size_t response_si
 		if (bytes_read > 0) {
 			response[bytes_read] = NULL_TERMINATOR;
 		}
-	} else if (ready == 0) { // Timeout
+	} else if (ready == 0) { /* Timeout */
 		bytes_read = 0;
 	}
 	return bytes_read;
@@ -137,7 +137,7 @@ bool init_modem(void) {
 		if (!cmd || !desc) {
 			continue;
 		}
-		run_init_command(cmd, desc); // log any failures but continue
+		run_init_command(cmd, desc); /* log any failures but continue */
 
 		msleep(MODEM_RESPONSE_DELAY_MILLIS);
 	}

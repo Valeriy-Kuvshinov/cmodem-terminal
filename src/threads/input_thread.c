@@ -83,8 +83,10 @@ static int process_line(char *line, int sms_mode) {
 		set_terminal_running(false);
 
 		return EXIT_SIGNAL;
+	}
+	print_output(MSG_TYPE_USER, line);
 
-	} else if (is_sms_command(line)) {
+	if (is_sms_command(line)) {
 		send_sms_command(line);
 
 		msleep(SMS_SEND_DELAY_MILLIS);

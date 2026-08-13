@@ -1,7 +1,28 @@
 #include "../../include/utils/utils.h"
 
 void print_output(const char *type, const char *text) {
-	printf("%s: %s%c", type, text, NEWLINE);
+	if (timeless_mode) {
+		if (strcmp(type, MSG_TYPE_USER) == 0) {
+			printf("%s %s%c", type, text, NEWLINE);
+
+		} else {
+			printf("%s: %s%c", type, text, NEWLINE);
+		}
+	} else {
+		time_t now = time(NULL);
+		struct tm tm_info;
+		char time_buffer[24];
+
+		localtime_r(&now, &tm_info);
+		strftime(time_buffer, sizeof(time_buffer), "%Y/%m/%d %H:%M:%S", &tm_info);
+
+		if (strcmp(type, MSG_TYPE_USER) == 0) {
+			printf("%s %s %s%c", time_buffer, type, text, NEWLINE);
+
+		} else {
+			printf("%s %s: %s%c", time_buffer, type, text, NEWLINE);
+		}
+	}
 	fflush(stdout);
 }
 
@@ -41,18 +62,18 @@ bool is_whitespace_only(const char *str) {
 char *trim_whitespace(char *str) {
 	char *end;
 
-	while (isspace((unsigned char)*str)) { // Trim leading space
+	while (isspace((unsigned char)*str)) { /* Trim leading space */
 		str++;
 	}
 	if (*str == 0) {
 		return str;
 	}
-	end = str + strlen(str) - 1; // Trim trailing space
+	end = str + strlen(str) - 1; /* Trim trailing space */
 
 	while (end > str && isspace((unsigned char)*end)) {
 		end--;
 	}
-	*(end + 1) = 0; // Write new null terminator
+	*(end + 1) = 0; /* Write new null terminator */
 
 	return str;
 }

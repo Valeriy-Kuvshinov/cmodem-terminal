@@ -23,7 +23,7 @@ void cleanup_terminal(void) {
 
 		terminal.fd = -1;
 	}
-	// Clear sensitive buffers immediately
+	/* Clear sensitive buffers immediately */
 	memset(terminal.output_buffer, 0, sizeof(terminal.output_buffer));
 	memset(terminal.last_command, 0, sizeof(terminal.last_command));
 

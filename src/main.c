@@ -5,21 +5,33 @@
 
 /* Inner STATIC methods */
 /* ==================================================================== */
-static bool has_quiet_mode_flag(int argc, char *argv[]) {
-	return (argc == 3) && (strcmp(argv[2], QUIET_MODE_FLAG) == 0);
-}
-
 static bool is_args_valid(int argc, char *argv[], int *quiet_mode) {
-	if (argc < 2 || argc > 3) {
-		fprintf(stderr, "Usage: %s <device_port> [%s]%c", argv[0], QUIET_MODE_FLAG, NEWLINE);
-		return false;
-	}
-	if (argc == 3 && !has_quiet_mode_flag(argc, argv)) {
-		fprintf(stderr, "Usage: %s <device_port> [%s]%c", argv[0], QUIET_MODE_FLAG, NEWLINE);
-		return false;
-	}
-	*quiet_mode = has_quiet_mode_flag(argc, argv);
+	int i;
 
+	if (argc < 2 || argc > 4) {
+		fprintf(stderr, "Usage: %s <device_port> [%s] [%s]%c", argv[0], QUIET_MODE_FLAG,
+				TIMELESS_MODE_FLAG, NEWLINE);
+		return false;
+	}
+	*quiet_mode = 0;
+	timeless_mode = false;
+
+	/* Iterate over optional flags starting from index 2 */
+	for (i = 2; i < argc; i++) {
+		if (strcmp(argv[i], QUIET_MODE_FLAG) == 0) {
+			*quiet_mode = 1;
+
+		} else if (strcmp(argv[i], TIMELESS_MODE_FLAG) == 0) {
+			timeless_mode = true;
+
+		} else {
+			fprintf(stderr, "Invalid argument: %s%c", argv[i], NEWLINE);
+			fprintf(stderr, "Usage: %s <device_port> [%s] [%s]%c", argv[0], QUIET_MODE_FLAG,
+					TIMELESS_MODE_FLAG, NEWLINE);
+
+			return false;
+		}
+	}
 	return true;
 }
 

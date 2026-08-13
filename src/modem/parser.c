@@ -29,7 +29,7 @@ void categorize_line(const char *line) {
 	}
 	/* Command is valid */
 	else if (is_ok_response(line)) {
-		// Suppress OK responses after call commands to reduce spam
+		/* Suppress OK responses after call commands to reduce spam */
 		if (!call_state.call_in_progress || !is_error_ok_command(terminal.last_command)) {
 			print_output(MSG_TYPE_COMPLETE, "OK");
 		}

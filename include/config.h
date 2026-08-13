@@ -1,12 +1,10 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 
 #include "./globals/chars.h"
-#include "./utils/file_utils.h"
 #include "./utils/utils.h"
 
 #define MAX_CONFIG_LINE 256
@@ -19,23 +17,23 @@
 #define CONFIG_COMMAND_LINE "command_"
 #define CONFIG_DESC_LINE "description_"
 
-// Command entry structure
+/* Command entry structure */
 typedef struct {
 	char command[MAX_COMMAND_LENGTH];
 	char description[MAX_DESCRIPTION_LENGTH];
 } CommandEntry;
 
-// Configuration structure
+/* Config structure */
 typedef struct {
 	uint32_t baudrate;
 	CommandEntry init_commands[MAX_INIT_COMMANDS];
 	int command_count;
 } Config;
 
-// Global configuration instance
+/* Global Config instance */
 extern Config config;
 
-// Function prototypes
+/* Function prototypes */
 bool load_config(void);
 
 const char *get_config_command(int index);

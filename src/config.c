@@ -2,7 +2,7 @@
 
 /* Inner STATIC methods */
 /* ==================================================================== */
-// Helper function to safely copy config values to arrays
+/* Helper function to safely copy config values to arrays */
 static void set_config_array_value(char *dest, size_t max_len, const char *value, int index,
 								   bool update_count) {
 	if (index >= 0 && index < MAX_INIT_COMMANDS) {
@@ -16,7 +16,7 @@ static void set_config_array_value(char *dest, size_t max_len, const char *value
 	}
 }
 
-// Parse a single config line (key = value)
+/* Parse a single config line (key = value) */
 static bool parse_config_line(char *line) {
 	char *equals_pos = strchr(line, '=');
 
@@ -28,23 +28,23 @@ static bool parse_config_line(char *line) {
 	char *key = trim_whitespace(line);
 	char *value = trim_whitespace(equals_pos + 1);
 
-	// Remove quotes if present
+	/* Remove quotes if present */
 	if (*value == '"' && value[strlen(value) - 1] == '"') {
 		value[strlen(value) - 1] = NULL_TERMINATOR;
 		value++;
 	}
-	if (strcmp(key, CONFIG_BAUDRATE_LINE) == 0) { // Parse baudrate
+	if (strcmp(key, CONFIG_BAUDRATE_LINE) == 0) { /* Parse baudrate */
 		config.baudrate = (uint32_t)atoi(value);
 
-		// Parse commands (format: command_N = AT_COMMAND)
 	} else if (strncmp(key, CONFIG_COMMAND_LINE, sizeof(CONFIG_COMMAND_LINE) - 1) == 0) {
+		/* Parse commands (format: command_N = AT_COMMAND) */
 		int index = atoi(key + sizeof(CONFIG_COMMAND_LINE) - 1);
 
 		set_config_array_value(config.init_commands[index].command, MAX_COMMAND_LENGTH, value,
 							   index, false);
 
-		// Parse descriptions (format: description_N = Description text)
 	} else if (strncmp(key, CONFIG_DESC_LINE, sizeof(CONFIG_DESC_LINE) - 1) == 0) {
+		/* Parse descriptions (format: description_N = Description text) */
 		int index = atoi(key + sizeof(CONFIG_DESC_LINE) - 1);
 
 		set_config_array_value(config.init_commands[index].description, MAX_DESCRIPTION_LENGTH,
@@ -70,13 +70,12 @@ bool load_config(void) {
 	while (fgets(line, sizeof(line), file)) {
 		line_num++;
 
-		// Remove newline
 		size_t len = strlen(line);
 
 		if (len > 0 && line[len - 1] == NEWLINE) {
 			line[len - 1] = NULL_TERMINATOR;
 		}
-		// Skip comments and empty lines
+		/* Skip comments and empty lines */
 		if (line[0] == '#' || line[0] == NULL_TERMINATOR || isspace(line[0])) {
 			continue;
 		}

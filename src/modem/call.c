@@ -25,7 +25,7 @@ static void extract_caller_id(const char *line, char *caller_id) {
 	}
 	start = comma - 1;
 
-	while (start > line && *start != '"') { // Find the opening quote
+	while (start > line && *start != '"') { /* Find the opening quote */
 		start--;
 	}
 	if (*start != '"') {

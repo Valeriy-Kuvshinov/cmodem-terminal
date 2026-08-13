@@ -6,12 +6,13 @@
 
 #define CALLER_ID_LENGTH 32
 
-// Call state tracking
+/* Call state tracking */
 typedef struct {
 	bool call_in_progress;
 	char last_caller_id[CALLER_ID_LENGTH];
 } CallState;
 
+/* Global Call State instance */
 extern CallState call_state;
 
 /* Function prototypes */

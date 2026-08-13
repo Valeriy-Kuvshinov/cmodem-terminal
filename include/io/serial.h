@@ -1,9 +1,7 @@
 #ifndef SERIAL_H
 #define SERIAL_H
 
-#include <errno.h>
 #include <fcntl.h>
-#include <string.h>
 #include <termios.h>
 
 #include "../config.h"

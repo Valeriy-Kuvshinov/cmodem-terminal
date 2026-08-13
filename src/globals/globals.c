@@ -9,3 +9,5 @@ ModemTerminal terminal;
 CallState call_state = {0};
 
 Config config;
+
+bool timeless_mode = false;

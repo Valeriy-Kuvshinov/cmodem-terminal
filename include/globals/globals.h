@@ -6,5 +6,9 @@
 
 /* App launch flags */
 #define QUIET_MODE_FLAG "--quiet"
+#define TIMELESS_MODE_FLAG "--timeless"
+
+/* Global app state */
+extern bool timeless_mode;
 
 #endif
