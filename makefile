@@ -15,15 +15,23 @@ HEADERS = $(wildcard $(INC_DIR)/*.h) $(wildcard $(INC_DIR)/*/*.h)
 OBJ_DIR = obj
 OBJECTS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SOURCES))
 
-all: $(OBJ_DIR) $(EXEC)
+# Ensure needed packages exist before continuing
+all: check_deps $(OBJ_DIR) $(EXEC)
 	@rm -rf $(OBJ_DIR)
+
+check_deps:
+	@echo "Checking system dependencies..."
+	@echo "#include <readline/readline.h>" | $(CC) -E - > /dev/null 2>&1 || \
+	(echo "ERROR: GNU Readline headers not found." && \
+	 echo "Please install it using: sudo apt-get install libreadline-dev" && \
+	 exit 1)
 
 $(OBJ_DIR):
 	@mkdir -p $(OBJ_DIR)/modem $(OBJ_DIR)/io $(OBJ_DIR)/threads $(OBJ_DIR)/utils $(OBJ_DIR)/globals
 
 $(EXEC): $(OBJECTS)
 	@echo "Linking $(EXEC)..."
-	@$(CC) $(FLAGS) -I$(INC_DIR) -o $@ $(OBJECTS) -lpthread
+	@$(CC) $(FLAGS) -I$(INC_DIR) -o $@ $(OBJECTS) -lpthread -lreadline
 
 $(OBJ_DIR)/modem/%.o: $(SRC_DIR)/modem/%.c
 	@echo "Compiling $<..."

@@ -1,37 +1,16 @@
 #include "../../include/threads/threads.h"
 
+static int current_sms_mode = SMS_MODE_OFF;
+
+/* Keep track of commands to prevent consecutive duplicates */
+static char last_history_cmd[MAX_COMMAND] = {0};
+
 /* Inner STATIC methods */
 /* ==================================================================== */
-static bool has_newline(const char *str) { return strchr(str, NEWLINE) != NULL; }
-
-static bool is_buffer_full(const char *str, size_t size) { return strlen(str) == (size - 1); }
-
 static bool is_exit_command(const char *line) { return strcasecmp(line, EXIT_APP_COMMAND) == 0; }
 
 static bool is_sms_command(const char *line) {
 	return strncmp(line, AT_SEND_SMS "=", AT_SEND_SMS_LENGTH + 1) == 0;
-}
-
-static void clear_stdin_buffer(void) {
-	int c;
-
-	while ((c = getchar()) != NEWLINE && c != EOF) {
-		; /* discard characters */
-	}
-}
-
-static bool sanitize_input(char *line, size_t buffer_size) {
-	line[buffer_size - 1] = NULL_TERMINATOR;
-
-	if (!has_newline(line) && is_buffer_full(line, buffer_size)) {
-		return false;
-	}
-	size_t length = strlen(line);
-
-	if (length > 0 && line[length - 1] == NEWLINE) {
-		line[length - 1] = NULL_TERMINATOR;
-	}
-	return true;
 }
 
 static void record_last_command(const char *cmd) {
@@ -79,11 +58,9 @@ static void send_sms_command(const char *line) { send_raw_command(line, AT_SEND_
 static int process_line(char *line, int sms_mode) {
 	if (is_exit_command(line)) {
 		print_output(MSG_TYPE_COMPLETE, "Shutting down...");
-
-		set_terminal_running(false);
-
 		return EXIT_SIGNAL;
 	}
+
 	print_output(MSG_TYPE_USER, line);
 
 	if (is_sms_command(line)) {
@@ -93,6 +70,7 @@ static int process_line(char *line, int sms_mode) {
 
 		return SMS_MODE_ON;
 	}
+
 	if (sms_mode) {
 		send_sms_content(line);
 		complete_sms_sending();
@@ -110,51 +88,62 @@ static int process_line(char *line, int sms_mode) {
 	}
 }
 
+/* Callback triggered by Readline when the user presses Enter */
+static void handle_input_line(char *line) {
+	if (line == NULL) {
+		/* EOF reached */
+		print_output(MSG_TYPE_WARNING, "Standard input closed. Exiting terminal.");
+
+		set_terminal_running(false);
+
+		return;
+	}
+
+	if (strlen(line) >= MAX_COMMAND) {
+		print_output(MSG_TYPE_WARNING, "Input too long - ignored");
+
+		free(line);
+
+		return;
+	}
+	if (strlen(line) > 0) {
+		/* Prevent consecutive duplicate commands in history */
+		if (strcmp(line, last_history_cmd) != 0) {
+			add_history(line);
+			strncpy(last_history_cmd, line, sizeof(last_history_cmd) - 1);
+		}
+		int new_mode = process_line(line, current_sms_mode);
+
+		if (new_mode == EXIT_SIGNAL) {
+			set_terminal_running(false);
+
+		} else {
+			current_sms_mode = new_mode;
+		}
+	}
+	free(line);
+}
+
 /* Outer methods */
 /* ==================================================================== */
 void *read_stdin_thread(void *arg) {
-	char line[MAX_COMMAND];
-	int sms_mode = false;
 	struct pollfd pfd;
-
 	pfd.fd = STDIN_FILENO;
 	pfd.events = POLLIN;
 
+	/* Initialize the Readline callback interface with an empty prompt */
+	rl_callback_handler_install("", handle_input_line);
+
 	while (atomic_load(&terminal.is_running)) {
-		/* Avoid blocking forever */
 		if (poll(&pfd, 1, STDIN_POLL_TIMEOUT_MILLIS) <= 0) {
 			continue;
 		}
 		if (!(pfd.revents & POLLIN)) {
 			continue;
 		}
-		if (fgets(line, sizeof(line), stdin) == NULL) {
-			/* EOF reached */
-			if (feof(stdin) || ferror(stdin)) {
-				print_output(MSG_TYPE_WARNING, "Standard input closed. Exiting terminal.");
-
-				set_terminal_running(false);
-
-				break;
-			}
-			continue;
-		}
-		if (!sanitize_input(line, sizeof(line))) {
-			clear_stdin_buffer();
-
-			print_output(MSG_TYPE_WARNING, "Input too long - ignored");
-
-			continue;
-		}
-		if (strlen(line) == 0) {
-			continue;
-		}
-		int new_mode = process_line(line, sms_mode);
-
-		if (new_mode == EXIT_SIGNAL) {
-			break;
-		}
-		sms_mode = new_mode;
+		rl_callback_read_char(); /* Delegate the raw character reading and editing to Readline */
 	}
+	rl_callback_handler_remove(); /* Restore terminal canonical mode upon exit */
+
 	pthread_exit(NULL);
 }

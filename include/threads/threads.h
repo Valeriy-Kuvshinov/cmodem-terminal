@@ -2,6 +2,8 @@
 #define THREADS_H
 
 #include <poll.h>
+#include <readline/history.h>
+#include <readline/readline.h>
 
 #include "../globals/globals.h"
 #include "../io/serial.h"
