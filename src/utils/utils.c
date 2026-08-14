@@ -12,19 +12,13 @@ static void generate_timestamp(char *buffer, size_t size) {
 
 static void print_user_message(const char *time_prefix, const char *text) {
 	if (remote_mode) {
-		if (time_prefix) {
-			printf("%s %s %s%c", time_prefix, MSG_TYPE_USER, text, NEWLINE);
-
-		} else {
-			printf("%s %s%c", MSG_TYPE_USER, text, NEWLINE);
-		}
+		return; /* Prevent duplicate log entries in server environments	*/
+	}
+	if (time_prefix) {
+		printf("%s%s%s %s %s%c", ANSI_CURSOR_UP, ANSI_ERASE_LINE, time_prefix, MSG_TYPE_USER, text,
+			   NEWLINE);
 	} else {
-		if (time_prefix) {
-			printf("%s%s%s %s %s%c", ANSI_CURSOR_UP, ANSI_ERASE_LINE, time_prefix, MSG_TYPE_USER,
-				   text, NEWLINE);
-		} else {
-			printf("%s%s%s %s%c", ANSI_CURSOR_UP, ANSI_ERASE_LINE, MSG_TYPE_USER, text, NEWLINE);
-		}
+		printf("%s%s%s %s%c", ANSI_CURSOR_UP, ANSI_ERASE_LINE, MSG_TYPE_USER, text, NEWLINE);
 	}
 }
 
