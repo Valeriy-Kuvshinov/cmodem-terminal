@@ -1,29 +1,58 @@
 #include "../../include/utils/utils.h"
 
+/* Inner STATIC methods */
+/* ==================================================================== */
+static void generate_timestamp(char *buffer, size_t size) {
+	time_t now = time(NULL);
+	struct tm tm_info;
+
+	localtime_r(&now, &tm_info);
+	strftime(buffer, size, "%Y/%m/%d %H:%M:%S", &tm_info);
+}
+
+static void print_user_message(const char *time_prefix, const char *text) {
+	if (remote_mode) {
+		if (time_prefix) {
+			printf("%s %s %s%c", time_prefix, MSG_TYPE_USER, text, NEWLINE);
+
+		} else {
+			printf("%s %s%c", MSG_TYPE_USER, text, NEWLINE);
+		}
+	} else {
+		if (time_prefix) {
+			printf("%s%s%s %s %s%c", ANSI_CURSOR_UP, ANSI_ERASE_LINE, time_prefix, MSG_TYPE_USER,
+				   text, NEWLINE);
+		} else {
+			printf("%s%s%s %s%c", ANSI_CURSOR_UP, ANSI_ERASE_LINE, MSG_TYPE_USER, text, NEWLINE);
+		}
+	}
+}
+
+static void print_system_message(const char *time_prefix, const char *type, const char *text) {
+	if (time_prefix) {
+		printf("%s %s: %s%c", time_prefix, type, text, NEWLINE);
+	} else {
+		printf("%s: %s%c", type, text, NEWLINE);
+	}
+}
+
+/* Outer methods */
+/* ==================================================================== */
 void print_output(const char *type, const char *text) {
-    if (timeless_mode) {
-        if (strcmp(type, MSG_TYPE_USER) == 0) {
-            /* Reflect user's command */
-            printf("%s%s%s %s%c", ANSI_CURSOR_UP, ANSI_ERASE_LINE, type, text, NEWLINE);
-        } else {
-            printf("%s: %s%c", type, text, NEWLINE);
-        }
-    } else {
-        time_t now = time(NULL);
-        struct tm tm_info;
-        char time_buffer[24];
+	char time_buffer[24] = {0};
+	char *time_ptr = NULL;
 
-        localtime_r(&now, &tm_info);
-        strftime(time_buffer, sizeof(time_buffer), "%Y/%m/%d %H:%M:%S", &tm_info);
+	if (!timeless_mode) {
+		generate_timestamp(time_buffer, sizeof(time_buffer));
+		time_ptr = time_buffer;
+	}
+	if (strcmp(type, MSG_TYPE_USER) == 0) {
+		print_user_message(time_ptr, text);
 
-        if (strcmp(type, MSG_TYPE_USER) == 0) {
-            /* Reflect user's command */
-            printf("%s%s%s %s %s%c", ANSI_CURSOR_UP, ANSI_ERASE_LINE, time_buffer, type, text, NEWLINE);
-        } else {
-            printf("%s %s: %s%c", time_buffer, type, text, NEWLINE);
-        }
-    }
-    fflush(stdout);
+	} else {
+		print_system_message(time_ptr, type, text);
+	}
+	fflush(stdout);
 }
 
 void msleep(int millis) {

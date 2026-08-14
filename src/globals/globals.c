@@ -4,10 +4,10 @@
 #include "../../include/modem/modem.h"
 
 /* Global application state */
+Config config;
 ModemTerminal terminal;
-
 CallState call_state = {0};
 
-Config config;
-
+/* Application configuration flags */
 bool timeless_mode = false;
+bool remote_mode = false;

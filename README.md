@@ -45,11 +45,14 @@ make
 # Connect with quiet mode (suppress startup instructions)
 ./modem_terminal /dev/ttyUSB2 --quiet
 
-# Connect without timestamps (useful for server environments)
+# Connect without timestamps
 ./modem_terminal /dev/ttyUSB2 --timeless
 
-# Combine optional flags
-./modem_terminal /dev/ttyUSB2 --quiet --timeless
+# Connect without interactive terminal formatting
+./modem_terminal /dev/ttyUSB2 --remote
+
+# Combine optional flags (recommended for server environments)
+./modem_terminal /dev/ttyUSB2 --quiet --timeless --remote
 ```
 
 ### Command Line Options
@@ -57,6 +60,7 @@ make
 - `<serial_device>`: Serial port path (required, e.g., `/dev/ttyUSB0`)
 - `--quiet`: Suppress startup text and instruction messages (optional)
 - `--timeless`: Omit timestamps from the printed messages (optional)
+- `--remote`: Omit ANSI terminal formatting (optional)
 
 ### Interactive Commands
 
