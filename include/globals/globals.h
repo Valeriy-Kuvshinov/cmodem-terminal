@@ -5,15 +5,14 @@
 #include <stddef.h>
 
 #define MIN_APP_ARGUMENTS 2
-#define MAX_APP_ARGUMENTS 5
+#define MAX_APP_ARGUMENTS 4
 
 /* App launch flags */
-#define QUIET_MODE_FLAG "--quiet"
-#define TIMELESS_MODE_FLAG "--timeless"
-#define REMOTE_MODE_FLAG "--remote"
+#define SERVER_MODE_FLAG "--server"
+#define CONFIG_MODE_FLAG "--config"
 
 /* Global app state */
-extern bool timeless_mode;
-extern bool remote_mode;
+extern bool server_mode;
+extern bool config_mode;
 
 #endif

@@ -11,8 +11,8 @@ static void generate_timestamp(char *buffer, size_t size) {
 }
 
 static void print_user_message(const char *time_prefix, const char *text) {
-	if (remote_mode) {
-		return; /* Prevent duplicate log entries in server environments	*/
+	if (server_mode) {
+		return; /* Prevent duplicate log entries in server environments */
 	}
 	if (time_prefix) {
 		printf("%s%s%s %s %s%c", ANSI_CURSOR_UP, ANSI_ERASE_LINE, time_prefix, MSG_TYPE_USER, text,
@@ -36,7 +36,8 @@ void print_output(const char *type, const char *text) {
 	char time_buffer[24] = {0};
 	char *time_ptr = NULL;
 
-	if (!timeless_mode) {
+	if (!server_mode) {
+		/* Prevent duplicate timestamps in server environments */
 		generate_timestamp(time_buffer, sizeof(time_buffer));
 		time_ptr = time_buffer;
 	}

@@ -9,5 +9,5 @@ ModemTerminal terminal;
 CallState call_state = {0};
 
 /* Application configuration flags */
-bool timeless_mode = false;
-bool remote_mode = false;
+bool server_mode = false;
+bool config_mode = false;

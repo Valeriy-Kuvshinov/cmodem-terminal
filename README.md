@@ -12,7 +12,7 @@ Send SMS, manage calls, and execute AT commands reliably.
 - **Comprehensive Logging**: Detailed logging of all command responses and modem events, formatted with ISO 8601 timestamps and ANSI escape sequences.
 - **Call Management**: Real-time detection and logging of incoming/outgoing voice calls.
 - **SMS Capabilities**: Full text-mode SMS sending and incoming message detection.
-- **External Configuration**: Customizable startup AT command sequences via config file.
+- **External Configuration**: Optional parsing of startup AT command sequences and baud rate via config file.
 
 ## Requirements
 
@@ -24,7 +24,7 @@ Send SMS, manage calls, and execute AT commands reliably.
 
 ## Building
 
-GNU Readline development headers is needed in order to use the program.
+GNU Readline development headers are needed in order to build the program.
 
 ```bash
 # Install required dependencies
@@ -39,28 +39,24 @@ make
 ## Usage
 
 ```bash
-# Connect to USB modem
+# Connect to USB modem (interactive mode)
 ./modem_terminal /dev/ttyUSB2
 
-# Connect with quiet mode (suppress startup instructions)
-./modem_terminal /dev/ttyUSB2 --quiet
+# Connect and execute initialization commands from config
+./modem_terminal /dev/ttyUSB2 --config
 
-# Connect without timestamps
-./modem_terminal /dev/ttyUSB2 --timeless
+# Connect in headless server mode (suppress timestamps, instructions, and ANSI formatting)
+./modem_terminal /dev/ttyUSB2 --server
 
-# Connect without interactive terminal formatting
-./modem_terminal /dev/ttyUSB2 --remote
-
-# Combine optional flags (recommended for server environments)
-./modem_terminal /dev/ttyUSB2 --quiet --timeless --remote
+# Combine optional flags (recommended for servers)
+./modem_terminal /dev/ttyUSB2 --config --server
 ```
 
 ### Command Line Options
 
-- `<serial_device>`: Serial port path (required, e.g., `/dev/ttyUSB0`)
-- `--quiet`: Suppress startup text and instruction messages (optional)
-- `--timeless`: Omit timestamps from the printed messages (optional)
-- `--remote`: Omit ANSI terminal formatting (optional)
+- `<serial_device>`: Serial port path (required, e.g., /dev/ttyUSB0)
+- `--config`: Load baud rate and initialization sequence from app_config.txt (optional, defaults to 230400 baud if omitted)
+- `--server`: Headless server execution - suppresses startup messages, timestamps, and interactive ANSI formatting (optional)
 
 ### Interactive Commands
 

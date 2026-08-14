@@ -12,6 +12,9 @@
 #define MAX_DESCRIPTION_LENGTH 128
 #define MAX_INIT_COMMANDS 16
 
+/* Fallback constant */
+#define DEFAULT_BAUDRATE 230400
+
 #define CONFIG_FILE_NAME "app_config.txt"
 #define CONFIG_BAUDRATE_LINE "baudrate"
 #define CONFIG_COMMAND_LINE "command_"

@@ -35,15 +35,15 @@ static bool parse_config_line(char *line) {
 	}
 	if (strcmp(key, CONFIG_BAUDRATE_LINE) == 0) { /* Parse baudrate */
 		config.baudrate = (uint32_t)atoi(value);
-
-	} else if (strncmp(key, CONFIG_COMMAND_LINE, sizeof(CONFIG_COMMAND_LINE) - 1) == 0) {
+	}
+	if (strncmp(key, CONFIG_COMMAND_LINE, sizeof(CONFIG_COMMAND_LINE) - 1) == 0) {
 		/* Parse commands (format: command_N = AT_COMMAND) */
 		int index = atoi(key + sizeof(CONFIG_COMMAND_LINE) - 1);
 
 		set_config_array_value(config.init_commands[index].command, MAX_COMMAND_LENGTH, value,
 							   index, false);
-
-	} else if (strncmp(key, CONFIG_DESC_LINE, sizeof(CONFIG_DESC_LINE) - 1) == 0) {
+	}
+	if (strncmp(key, CONFIG_DESC_LINE, sizeof(CONFIG_DESC_LINE) - 1) == 0) {
 		/* Parse descriptions (format: description_N = Description text) */
 		int index = atoi(key + sizeof(CONFIG_DESC_LINE) - 1);
 
