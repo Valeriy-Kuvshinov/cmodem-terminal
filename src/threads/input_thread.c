@@ -131,6 +131,8 @@ void *read_stdin_thread(void *arg) {
 	pfd.fd = STDIN_FILENO;
 	pfd.events = POLLIN;
 
+	stifle_history(MAX_COMMANDS_HISTORY);
+
 	/* Initialize the Readline callback interface with an empty prompt */
 	rl_callback_handler_install("", handle_input_line);
 

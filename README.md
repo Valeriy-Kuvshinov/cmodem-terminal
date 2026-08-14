@@ -5,20 +5,20 @@ Send SMS, manage calls, and execute AT commands reliably.
 
 ## Features
 
--   **Direct Serial Communication**: Reliable serial port connection to GSM/GPRS modems using non-blocking I/O.
--   **Interactive AT Terminal**: User-friendly interface for executing Hayes-compatible AT commands.
--   **Command History**: Navigate previously executed commands using the Up/Down arrow keys (powered by GNU Readline).
--   **Robust Concurrency**: Thread-safe architecture utilizing C11 atomic operations and I/O multiplexing (`poll`).
--   **Comprehensive Logging**: Detailed logging of all command responses and modem events, formatted with ISO 8601 timestamps and ANSI escape sequences.
--   **Call Management**: Real-time detection and logging of incoming/outgoing voice calls.
--   **SMS Capabilities**: Full text-mode SMS sending and incoming message detection.
--   **External Configuration**: Customizable startup AT command sequences via config file.
+- **Direct Serial Communication**: Reliable serial port connection to GSM/GPRS modems using non-blocking I/O.
+- **Interactive AT Terminal**: User-friendly interface for executing Hayes-compatible AT commands.
+- **Command History**: Navigate previously executed commands using the Up/Down arrow keys (History capped at 500 commands).
+- **Robust Concurrency**: Thread-safe architecture utilizing C11 atomic operations and I/O multiplexing (`poll`).
+- **Comprehensive Logging**: Detailed logging of all command responses and modem events, formatted with ISO 8601 timestamps and ANSI escape sequences.
+- **Call Management**: Real-time detection and logging of incoming/outgoing voice calls.
+- **SMS Capabilities**: Full text-mode SMS sending and incoming message detection.
+- **External Configuration**: Customizable startup AT command sequences via config file.
 
 ## Requirements
 
--   **Compiler**: GCC with strict C11 support
--   **OS**: Linux (POSIX compliant)
--   **Dependencies**: 
+- **Compiler**: GCC with strict C11 support
+- **OS**: Linux (POSIX compliant)
+- **Dependencies**:
     - POSIX threads (`-lpthread`)
     - GNU Readline (`-lreadline`)
 
@@ -78,12 +78,11 @@ The application uses `app_config.txt` for configuration.
 
 ### Supported Configuration Options
 
--   **baudrate**: Serial communication speed (default: 230400)
--   **command_N**: AT command to execute during initialization
--   **description_N**: Human-readable description of the AT command
+- **baudrate**: Serial communication speed (default: 230400)
+- **command_N**: AT command to execute during initialization
+- **description_N**: Human-readable description of the AT command
 
 ## License
 
 Copyright (C) Valeriy Kuvshinov.  
-For private and commercial use.  
 View [MIT LICENSE](LICENSE) for details.
